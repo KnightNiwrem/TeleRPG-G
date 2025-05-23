@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import './config/env'; // Import and validate environment variables
 import { bot } from './bot';
 import { db } from './database/kysely';
 

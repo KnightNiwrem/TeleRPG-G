@@ -1,16 +1,17 @@
 import { Queue, Worker } from 'bullmq';
 import Redis from 'ioredis';
 import { db } from '../database/kysely';
+import { env } from '../config/env';
 
 // Redis connection options
 const redisConnection = {
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  password: process.env.REDIS_PASSWORD || '',
+  host: env.REDIS_HOST,
+  port: env.REDIS_PORT,
+  password: env.REDIS_PASSWORD,
 };
 
 // Queue name
-const queueName = process.env.QUEUE_NAME || 'telerpg_queue';
+const queueName = env.QUEUE_NAME;
 
 // Create Redis client
 const redisClient = new Redis(redisConnection);
