@@ -14,3 +14,4 @@ jest.mock('../../database/kysely.js');
 jest.mock('../../services/CharacterService.js');
 jest.mock('../../services/AreaService.js');
 jest.mock('../../services/QuestService.js');
+jest.mock('../../services/QueueService.js');

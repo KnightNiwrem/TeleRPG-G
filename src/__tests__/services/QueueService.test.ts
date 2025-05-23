@@ -22,21 +22,8 @@ const mockWorker = {
 };
 
 // Mock modules
-jest.mock('ioredis', () => {
-  return {
-    default: jest.fn().mockImplementation(() => ({
-      on: jest.fn(),
-    }))
-  };
-});
-
-jest.mock('bullmq', () => {
-  return {
-    Queue: jest.fn(() => mockQueue),
-    Worker: jest.fn(() => mockWorker),
-    Job: jest.fn(() => mockJob),
-  };
-});
+jest.mock('ioredis');
+jest.mock('bullmq');
 
 jest.mock('../../database/kysely.js', () => ({
   db: createMockDb()
