@@ -71,7 +71,7 @@ export async function questHandler(ctx: Context) {
   await ctx.reply(questText, { reply_markup: keyboard });
   
   // Set user state
-  stateService.setUserState(userId, {
+  await stateService.setUserState(userId, {
     action: 'quest_menu',
     step: 'view_quests',
   });

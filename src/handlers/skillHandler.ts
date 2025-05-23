@@ -32,7 +32,7 @@ export async function skillHandler(ctx: Context) {
   await ctx.reply('Your Skills:', { reply_markup: keyboard });
   
   // Set user state
-  stateService.setUserState(userId, {
+  await stateService.setUserState(userId, {
     action: 'skill_menu',
     step: 'view_skills',
   });
