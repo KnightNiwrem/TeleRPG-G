@@ -429,7 +429,7 @@ export class InventoryService {
    * @param itemName Item name (full or partial match)
    * @returns Object with success status and message
    */
-  async useItem(userId: number, itemName: string): Promise<{ success: boolean; message: string }> {
+  async useItemByName(userId: number, itemName: string): Promise<{ success: boolean; message: string }> {
     // Get character
     const character = await db
       .selectFrom('characters')
