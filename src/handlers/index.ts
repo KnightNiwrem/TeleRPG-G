@@ -8,6 +8,10 @@ import { questHandler } from './questHandler';
 import { attackHandler } from './attackHandler';
 import { goHandler } from './goHandler';
 import { messageHandler } from './messageHandler';
+import { equipHandler } from './equipHandler';
+import { unequipHandler } from './unequipHandler';
+import { useHandler } from './useHandler';
+import { dropHandler } from './dropHandler';
 
 export function registerCommandHandlers(bot: Bot) {
   // Register command handlers
@@ -19,6 +23,10 @@ export function registerCommandHandlers(bot: Bot) {
   bot.command('quest', questHandler);
   bot.command('attack', attackHandler);
   bot.command('go', goHandler);
+  bot.command('equip', equipHandler);
+  bot.command('unequip', unequipHandler);
+  bot.command('use', useHandler);
+  bot.command('drop', dropHandler);
 
   // Register message handler for text messages (handles multi-step interactions)
   bot.on('message:text', messageHandler);
@@ -33,7 +41,11 @@ export function registerCommandHandlers(bot: Bot) {
       '/attack [target] - Attack a monster in your area\n' +
       '/combat - Engage in combat with monsters\n' +
       '/skill - View and use your skills\n' +
-      '/inventory - Manage your inventory\n' +
+      '/inventory - View your inventory\n' +
+      '/equip <item_name> - Equip an item\n' +
+      '/unequip <slot_name> - Unequip an item from a slot\n' +
+      '/use <item_name> - Use a consumable item\n' +
+      '/drop <item_name> [quantity] - Drop items from inventory\n' +
       '/quest - View available quests and progress\n' +
       '/help - Show this help message'
     );
