@@ -31,11 +31,13 @@ export class CombatService {
     areaService?: AreaService
   ) {
     // Initialize Redis connection if not provided
-    this.redis = redisInstance || new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD || '',
-    });
+    this.redis = redisInstance || new Redis(
+      process.env.REDIS_HOST || 'localhost',
+      parseInt(process.env.REDIS_PORT || '6379'),
+      {
+        password: process.env.REDIS_PASSWORD || '',
+      }
+    );
 
     this.db = dbInstance;
     this.characterService = characterService || new CharacterService(this.db);
