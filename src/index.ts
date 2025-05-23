@@ -8,12 +8,13 @@ import { sql } from 'kysely';
 async function checkDatabaseConnection() {
   try {
     // Using raw SQL to check database connection
-    const result = await db.executeQuery({
-      sql: 'SELECT version() as version FROM information_schema.tables LIMIT 1',
-      parameters: [],
-    });
+    const query = sql`SELECT version() as version`;
+    const result = await db.selectFrom(sql`information_schema.tables`)
+      .select([query.as('version')])
+      .limit(1)
+      .execute();
     
-    console.log(`Connected to PostgreSQL: ${result.rows[0]?.version || 'Unknown version'}`);
+    console.log(`Connected to PostgreSQL: ${result[0]?.version || 'Unknown version'}`);
     return true;
   } catch (error) {
     console.error('Database connection error:', error);

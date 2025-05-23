@@ -13,11 +13,13 @@ export class StateService {
 
   constructor() {
     // Initialize Redis connection
-    this.redis = new Redis({
-      host: env.REDIS_HOST,
-      port: env.REDIS_PORT,
-      password: env.REDIS_PASSWORD,
-    });
+    this.redis = new Redis(
+      env.REDIS_HOST,
+      env.REDIS_PORT,
+      {
+        password: env.REDIS_PASSWORD,
+      }
+    );
 
     // Test Redis connection
     this.redis.ping().catch((error: Error) => {

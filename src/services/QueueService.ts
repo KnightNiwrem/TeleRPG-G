@@ -14,10 +14,12 @@ const redisConnection = {
 const queueName = env.QUEUE_NAME;
 
 // Create Redis client
-const redisClient = new Redis({
-  host: env.REDIS_HOST,
-  port: env.REDIS_PORT,
-  password: env.REDIS_PASSWORD,
+const redisClient = new Redis(
+  env.REDIS_HOST,
+  env.REDIS_PORT,
+  {
+    password: env.REDIS_PASSWORD,
+  }
 });
 
 // Initialize BullMQ queue
