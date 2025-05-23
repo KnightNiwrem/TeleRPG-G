@@ -253,38 +253,38 @@ export class SkillService {
     let resultMessage = '';
     
     switch (characterSkill.type) {
-      case 'ATTACK':
-        // Calculate damage based on skill damage and character stats
-        const baseDamage = characterSkill.damage;
-        const statBonus = character.intelligence * 0.5;
-        damageDealt = Math.floor(baseDamage + statBonus);
-        resultMessage = `You used ${characterSkill.name} and dealt ${damageDealt} damage!`;
-        break;
+    case 'ATTACK':
+      // Calculate damage based on skill damage and character stats
+      const baseDamage = characterSkill.damage;
+      const statBonus = character.intelligence * 0.5;
+      damageDealt = Math.floor(baseDamage + statBonus);
+      resultMessage = `You used ${characterSkill.name} and dealt ${damageDealt} damage!`;
+      break;
       
-      case 'HEAL':
-        // Calculate healing based on skill healing and character stats
-        const baseHealing = characterSkill.healing;
-        const wisdomBonus = character.wisdom * 0.5;
-        healingDone = Math.floor(baseHealing + wisdomBonus);
+    case 'HEAL':
+      // Calculate healing based on skill healing and character stats
+      const baseHealing = characterSkill.healing;
+      const wisdomBonus = character.wisdom * 0.5;
+      healingDone = Math.floor(baseHealing + wisdomBonus);
         
-        // Apply healing
-        const newHp = Math.min(character.max_hp, character.current_hp + healingDone);
-        await db
-          .updateTable('characters')
-          .set({ current_hp: newHp })
-          .where('id', '=', character.id)
-          .execute();
+      // Apply healing
+      const newHp = Math.min(character.max_hp, character.current_hp + healingDone);
+      await db
+        .updateTable('characters')
+        .set({ current_hp: newHp })
+        .where('id', '=', character.id)
+        .execute();
         
-        resultMessage = `You used ${characterSkill.name} and healed for ${healingDone} HP!`;
-        break;
+      resultMessage = `You used ${characterSkill.name} and healed for ${healingDone} HP!`;
+      break;
       
-      case 'BUFF':
-        resultMessage = `You used ${characterSkill.name} and gained a temporary buff!`;
-        break;
+    case 'BUFF':
+      resultMessage = `You used ${characterSkill.name} and gained a temporary buff!`;
+      break;
       
-      case 'DEBUFF':
-        resultMessage = `You used ${characterSkill.name} and applied a debuff to the enemy!`;
-        break;
+    case 'DEBUFF':
+      resultMessage = `You used ${characterSkill.name} and applied a debuff to the enemy!`;
+      break;
     }
     
     return {

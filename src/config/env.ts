@@ -4,8 +4,8 @@ import { z } from 'zod';
 const envSchema = z.object({
   // Bot Configuration
   BOT_TOKEN: z.string({
-    required_error: "BOT_TOKEN is required",
-  }).min(1, "BOT_TOKEN cannot be empty"),
+    required_error: 'BOT_TOKEN is required',
+  }).min(1, 'BOT_TOKEN cannot be empty'),
 
   // Database Configuration
   DB_HOST: z.string().default('localhost'),
