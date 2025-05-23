@@ -198,7 +198,7 @@ describe('CombatService', () => {
       
       expect(result.state.enemy.currentHp).toBeLessThan(20);
       expect(result.state.turn).toBe('enemy');
-      expect(result.message).toContain('hit the Goblin for');
+      expect(result.message).toContain('You hit Goblin for');
     });
 
     test('should handle defeating the enemy', async () => {
@@ -236,8 +236,8 @@ describe('CombatService', () => {
       global.Math.random = originalRandom;
       
       expect(result.state.enemy.currentHp).toBe(0);
-      expect(result.message).toContain('defeated the Goblin');
-      expect(mockCharacterService.addExperience).toHaveBeenCalledWith(1, 10);
+      expect(result.message).toContain('The Goblin is defeated');
+      expect(mockCharacterService.handleBattleRewards).toHaveBeenCalledWith(1, 10);
     });
   });
 });
