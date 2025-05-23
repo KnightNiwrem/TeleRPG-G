@@ -118,6 +118,8 @@ async function seedMonsters() {
       exp_reward: 10,
       gold_reward: 5,
       item_drop_rate: 0.2,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Goblin Scout',
@@ -129,6 +131,8 @@ async function seedMonsters() {
       exp_reward: 15,
       gold_reward: 8,
       item_drop_rate: 0.3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Cave Bat',
@@ -140,6 +144,8 @@ async function seedMonsters() {
       exp_reward: 20,
       gold_reward: 10,
       item_drop_rate: 0.2,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Cave Spider',
@@ -151,6 +157,8 @@ async function seedMonsters() {
       exp_reward: 25,
       gold_reward: 12,
       item_drop_rate: 0.3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Mountain Goat',
@@ -162,6 +170,8 @@ async function seedMonsters() {
       exp_reward: 30,
       gold_reward: 15,
       item_drop_rate: 0.25,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Rock Elemental',
@@ -173,6 +183,8 @@ async function seedMonsters() {
       exp_reward: 45,
       gold_reward: 25,
       item_drop_rate: 0.4,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Ancient Guardian',
@@ -184,6 +196,8 @@ async function seedMonsters() {
       exp_reward: 60,
       gold_reward: 30,
       item_drop_rate: 0.5,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 
