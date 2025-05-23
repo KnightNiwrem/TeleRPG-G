@@ -188,8 +188,8 @@ describe('CombatService', () => {
         round: 1
       });
       
-      // Mock setPlayerTurn
-      jest.spyOn(combatService as any, 'setEnemyTurn').mockResolvedValueOnce(undefined);
+      // Mock redis.set for state update
+      mockRedis.set = jest.fn().mockResolvedValueOnce('OK');
       
       const result = await combatService.processPlayerAttack(123);
       
@@ -227,11 +227,8 @@ describe('CombatService', () => {
       // Mock endCombat
       jest.spyOn(combatService as any, 'endCombat').mockResolvedValueOnce(undefined);
       
-      // Mock addExperience
-      mockCharacterService.addExperience = jest.fn().mockResolvedValueOnce({
-        newLevel: 1,
-        leveledUp: false
-      });
+      // Mock handleBattleRewards
+      mockCharacterService.handleBattleRewards = jest.fn().mockResolvedValueOnce(undefined);
       
       const result = await combatService.processPlayerAttack(123);
       
