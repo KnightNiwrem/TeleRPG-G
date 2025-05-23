@@ -56,7 +56,7 @@ export class QuestService {
     
     // Get objectives for each quest
     const activeQuests = await Promise.all(
-      characterQuests.map(async (quest: CharacterQuest) => {
+      characterQuests.map(async (quest) => {
         const objectives = await this.getQuestObjectives(character.id, quest.questId);
         
         return {
