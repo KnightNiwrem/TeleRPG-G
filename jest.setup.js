@@ -5,5 +5,3 @@ process.env.REDIS_PORT = '6379';
 process.env.REDIS_PASSWORD = '';
 process.env.TELEGRAM_BOT_TOKEN = 'mock-token';
 process.env.NODE_ENV = 'test';
-
-export {};

@@ -1,4 +1,5 @@
-const config = {
+// Jest configuration for ESM
+export default {
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
       tsconfig: 'tsconfig.json',
@@ -14,5 +15,3 @@ const config = {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
 };
-
-export default config;

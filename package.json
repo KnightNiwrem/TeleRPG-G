@@ -11,7 +11,7 @@
     "migrate": "ts-node --esm src/database/migrateToLatest.ts",
     "seed": "ts-node --esm src/database/seed.ts",
     "lint": "eslint . --ext .ts",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.mjs"
   },
   "repository": {
     "type": "git",
