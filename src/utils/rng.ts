@@ -3,12 +3,26 @@
  */
 
 /**
- * Generate a random integer between min and max (inclusive)
- * @param min Minimum value
- * @param max Maximum value
- * @returns Random integer
+ * Generate a random integer between min and max (inclusive).
+ *
+ * Ensures that `min` and `max` are finite numbers and that `min` is not
+ * greater than `max`.
+ *
+ * @param min The minimum value. Must be a finite number.
+ * @param max The maximum value. Must be a finite number and >= min.
+ * @returns A random integer between `min` and `max` (inclusive).
+ * @throws {Error} If `min` or `max` are not finite numbers.
+ * @throws {Error} If `min` is greater than `max`.
  */
 export function randomInt(min: number, max: number): number {
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    throw new Error('Inputs "min" and "max" must be finite numbers.');
+  }
+
+  if (min > max) {
+    throw new Error('Input "min" cannot be greater than "max".');
+  }
+  // Standard formula for inclusive random integer.
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -37,7 +51,7 @@ export function randomChance(probability: number): boolean {
  * @returns Random item from the array
  */
 export function randomItem<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
+  return array[randomInt(0, array.length - 1)];
 }
 
 /**

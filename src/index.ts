@@ -34,11 +34,16 @@ async function start() {
 
   // Start the bot
   console.log('Starting bot...');
-  bot.start({
-    onStart: () => {
-      console.log(`Bot @${bot.botInfo.username} is running!`);
-    },
-  });
+  try {
+    await bot.start({
+      onStart: (botInfo) => {
+        console.log(`Bot @${botInfo.username} is running!`);
+      },
+    });
+  } catch (error) {
+    console.error('Failed to initiate bot startup:', error);
+    throw error;
+  }
 }
 
 // Handle shutdown gracefully
@@ -52,7 +57,9 @@ process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
 // Run the application
-start().catch(error => {
+try {
+  await start();
+} catch (error) {
   console.error('Application startup error:', error);
   process.exit(1);
-});
+}

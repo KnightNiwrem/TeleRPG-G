@@ -1,13 +1,12 @@
 import { Queue, Worker } from 'bullmq';
-// @ts-ignore - Importing Redis with type issues
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { db } from '../database/kysely.js';
 import { env } from '../config/env.js';
 
 // Redis connection options
 const redisConnection = {
   host: env.REDIS_HOST,
-  port: env.REDIS_PORT,
+  port: Number(env.REDIS_PORT),
   password: env.REDIS_PASSWORD,
 };
 
@@ -15,14 +14,7 @@ const redisConnection = {
 const queueName = env.QUEUE_NAME;
 
 // Create Redis client with proper typing
-// @ts-ignore - Using any to fix Redis constructor typing issue
-const redisClient = new Redis(
-  env.REDIS_HOST,
-  env.REDIS_PORT,
-  {
-    password: env.REDIS_PASSWORD,
-  }
-);
+const redisClient = new Redis(redisConnection);
 
 // Initialize BullMQ queue
 const queue = new Queue(queueName, { connection: redisClient });
