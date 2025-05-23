@@ -2,19 +2,36 @@ import 'dotenv/config';
 import { bot } from './bot';
 import { db } from './database/kysely';
 
-// Log any database connection issues
-db.introspection.getTables().catch(error => {
-  console.error('Database connection error:', error);
-  process.exit(1);
-});
+// Check database version and connection
+async function checkDatabaseConnection() {
+  try {
+    const result = await db.executeQuery(
+      db.selectFrom('information_schema.tables')
+        .select(db.raw('version() as version'))
+        .limit(1)
+        .compile()
+    );
+    console.log(`Connected to PostgreSQL: ${result.rows[0]?.version || 'Unknown version'}`);
+    return true;
+  } catch (error) {
+    console.error('Database connection error:', error);
+    process.exit(1);
+  }
+}
 
-// Start the bot
-console.log('Starting bot...');
-bot.start({
-  onStart: () => {
-    console.log(`Bot @${bot.botInfo.username} is running!`);
-  },
-});
+// Start the application
+async function start() {
+  // Check database connection
+  await checkDatabaseConnection();
+
+  // Start the bot
+  console.log('Starting bot...');
+  bot.start({
+    onStart: () => {
+      console.log(`Bot @${bot.botInfo.username} is running!`);
+    },
+  });
+}
 
 // Handle shutdown gracefully
 const shutdown = async () => {
@@ -25,3 +42,9 @@ const shutdown = async () => {
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
+
+// Run the application
+start().catch(error => {
+  console.error('Application startup error:', error);
+  process.exit(1);
+});
