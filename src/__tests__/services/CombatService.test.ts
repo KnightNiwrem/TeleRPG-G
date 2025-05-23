@@ -1,10 +1,10 @@
 import { jest } from '@jest/globals';
 import '../mocks';
-import { CombatService } from '../../services/CombatService';
-import { createMockDb, createMockRedis } from '../utils/mockUtils';
-import { CharacterService } from '../../services/CharacterService';
-import { AreaService } from '../../services/AreaService';
-import { EntityType, ClassType } from '../../core/enums';
+import { CombatService } from '../../services/CombatService.js';
+import { createMockDb, createMockRedis } from '../utils/mockUtils.js';
+import { CharacterService } from '../../services/CharacterService.js';
+import { AreaService } from '../../services/AreaService.js';
+import { EntityType, ClassType } from '../../core/enums.js';
 
 // Mock the CharacterService and AreaService
 jest.mock('../../services/CharacterService');

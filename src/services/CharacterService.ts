@@ -1,7 +1,7 @@
-import { db as defaultDb } from '../database/kysely';
-import { ClassType, EntityType } from '../core/enums';
-import { Character } from '../core/types';
-import { NewCharacter } from '../database/schema';
+import { db as defaultDb } from '../database/kysely.js';
+import { ClassType, EntityType } from '../core/enums.js';
+import { Character } from '../core/types.js';
+import { NewCharacter } from '../database/schema.js';
 
 /**
  * CharacterService - Handles character-related operations

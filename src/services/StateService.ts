@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
-import { UserState, UserStateAction } from '../core/types';
-import { env } from '../config/env';
+import { UserState, UserStateAction } from '../core/types.js';
+import { env } from '../config/env.js';
 
 /**
  * StateService - Handles user state management without using grammyjs sessions
@@ -20,7 +20,7 @@ export class StateService {
     });
 
     // Test Redis connection
-    this.redis.ping().catch(error => {
+    this.redis.ping().catch((error: Error) => {
       console.error('Redis connection error:', error);
     });
   }

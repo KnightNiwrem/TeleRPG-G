@@ -1,5 +1,5 @@
-import { db as defaultDb } from '../database/kysely';
-import { Quest, QuestObjective, CharacterQuest } from '../core/types';
+import { db as defaultDb } from '../database/kysely.js';
+import { Quest, QuestObjective, CharacterQuest } from '../core/types.js';
 
 /**
  * QuestService - Handles quest-related operations

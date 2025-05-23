@@ -1,4 +1,4 @@
-import { ClassType, EntityType, EquipmentSlot, ItemType, SkillType, AreaType, QuestType, ObjectiveType } from './enums';
+import { ClassType, EntityType, EquipmentSlot, ItemType, SkillType, AreaType, QuestType, ObjectiveType } from './enums.js';
 
 // Base entity interface
 export interface Entity {

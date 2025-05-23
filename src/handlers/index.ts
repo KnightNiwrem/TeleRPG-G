@@ -1,17 +1,17 @@
 import { Bot } from 'grammy';
-import { startHandler } from './startHandler';
-import { exploreHandler } from './exploreHandler';
-import { combatHandler } from './combatHandler';
-import { skillHandler } from './skillHandler';
-import { inventoryHandler } from './inventoryHandler';
-import { questHandler } from './questHandler';
-import { attackHandler } from './attackHandler';
-import { goHandler } from './goHandler';
-import { messageHandler } from './messageHandler';
-import { equipHandler } from './equipHandler';
-import { unequipHandler } from './unequipHandler';
-import { useHandler } from './useHandler';
-import { dropHandler } from './dropHandler';
+import { startHandler } from './startHandler.js';
+import { exploreHandler } from './exploreHandler.js';
+import { combatHandler } from './combatHandler.js';
+import { skillHandler } from './skillHandler.js';
+import { inventoryHandler } from './inventoryHandler.js';
+import { questHandler } from './questHandler.js';
+import { attackHandler } from './attackHandler.js';
+import { goHandler } from './goHandler.js';
+import { messageHandler } from './messageHandler.js';
+import { equipHandler } from './equipHandler.js';
+import { unequipHandler } from './unequipHandler.js';
+import { useHandler } from './useHandler.js';
+import { dropHandler } from './dropHandler.js';
 
 export function registerCommandHandlers(bot: Bot) {
   // Register command handlers

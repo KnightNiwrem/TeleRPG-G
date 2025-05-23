@@ -1,6 +1,6 @@
 import { Context } from 'grammy';
-import { stateService } from '../bot';
-import { QuestService } from '../services/QuestService';
+import { stateService } from '../bot.js';
+import { QuestService } from '../services/QuestService.js';
 import { InlineKeyboard } from 'grammy';
 
 const questService = new QuestService();

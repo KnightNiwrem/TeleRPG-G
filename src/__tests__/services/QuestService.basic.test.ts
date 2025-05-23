@@ -19,7 +19,7 @@ jest.mock('../../config/env', () => ({
 }));
 
 // QuestService.basic.test.ts
-import { QuestService } from '../../services/QuestService';
+import { QuestService } from '../../services/QuestService.js';
 
 // Test the core methods directly without using DB
 describe('QuestService basic functionality', () => {

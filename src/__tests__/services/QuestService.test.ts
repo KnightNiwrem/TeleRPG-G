@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import '../mocks';
-import { QuestService } from '../../services/QuestService';
-import { createMockDb } from '../utils/mockUtils';
+import { QuestService } from '../../services/QuestService.js';
+import { createMockDb } from '../utils/mockUtils.js';
 
 describe('QuestService', () => {
   let questService: QuestService;
