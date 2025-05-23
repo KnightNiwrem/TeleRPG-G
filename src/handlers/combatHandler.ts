@@ -19,21 +19,27 @@ export async function combatHandler(ctx: Context) {
     // Show combat status and options
     const combatState = await combatService.getCombatState(userId);
     
-    const keyboard = new InlineKeyboard()
-      .text('Attack', 'combat_attack')
-      .text('Use Skill', 'combat_skill')
-      .row()
-      .text('Use Item', 'combat_item')
-      .text('Flee', 'combat_flee');
-    
-    await ctx.reply(
-      `You are in combat with ${combatState.enemy.name}!\n` +
-      `Enemy HP: ${combatState.enemy.currentHp}/${combatState.enemy.maxHp}\n` +
-      `Your HP: ${combatState.character.currentHp}/${combatState.character.maxHp}\n` +
-      `Your SP: ${combatState.character.currentSp}/${combatState.character.maxSp}\n\n` +
-      'What will you do?',
-      { reply_markup: keyboard }
-    );
+    if (combatState && combatState.enemy && combatState.character) {
+      const keyboard = new InlineKeyboard()
+        .text('Attack', 'combat_attack')
+        .text('Use Skill', 'combat_skill')
+        .row()
+        .text('Use Item', 'combat_item')
+        .text('Flee', 'combat_flee');
+      
+      await ctx.reply(
+        `You are in combat with ${combatState.enemy.name}!\n` +
+        `Enemy HP: ${combatState.enemy.currentHp}/${combatState.enemy.maxHp}\n` +
+        `Your HP: ${combatState.character.currentHp}/${combatState.character.maxHp}\n` +
+        `Your SP: ${combatState.character.currentSp}/${combatState.character.maxSp}\n\n` +
+        'What will you do?',
+        { reply_markup: keyboard }
+      );
+    } else {
+      await ctx.reply('Unable to retrieve combat information. Please try again.');
+      // Clear combat state if it's corrupted
+      await stateService.clearUserState(userId);
+    }
   } else {
     // Start a new combat
     await ctx.reply('Searching for enemies...');

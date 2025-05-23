@@ -59,21 +59,25 @@ async function handleAttackTarget(ctx: Context, userId: number, targetName: stri
     }
     
     // Combat initiated successfully
-    await ctx.reply(
-      `You engage ${result.enemy.name}!\n` +
-      `Enemy HP: ${result.enemy.currentHp}/${result.enemy.maxHp}\n` +
-      `Your HP: ${result.character.currentHp}/${result.character.maxHp}\n` +
-      `Your SP: ${result.character.currentSp}/${result.character.maxSp}\n\n` +
-      'What will you do?',
-      { reply_markup: result.keyboard }
-    );
-    
-    // Update state to in combat
-    await stateService.updateUserState(userId, {
-      action: 'in_combat',
-      step: 'turn_start',
-      enemyId: result.enemy.id,
-    });
+    if (result.enemy && result.character) {
+      await ctx.reply(
+        `You engage ${result.enemy.name}!\n` +
+        `Enemy HP: ${result.enemy.currentHp}/${result.enemy.maxHp}\n` +
+        `Your HP: ${result.character.currentHp}/${result.character.maxHp}\n` +
+        `Your SP: ${result.character.currentSp}/${result.character.maxSp}\n\n` +
+        'What will you do?',
+        { reply_markup: result.keyboard }
+      );
+      
+      // Update state to in combat
+      await stateService.updateUserState(userId, {
+        action: 'in_combat',
+        step: 'turn_start',
+        enemyId: result.enemy.id,
+      });
+    } else {
+      await ctx.reply('Error: Combat data is incomplete. Please try again.');
+    }
   } catch (error) {
     console.error('Error initiating combat:', error);
     await ctx.reply('An error occurred while trying to initiate combat. Please try again.');
@@ -108,11 +112,15 @@ async function handleSkillConfirmation(ctx: Context, userId: number, message: st
     const inCombat = await combatService.isInCombat(userId);
     if (inCombat && result.success) {
       const combatState = await combatService.getCombatState(userId);
-      await ctx.reply(
-        `Enemy HP: ${combatState.enemy.currentHp}/${combatState.enemy.maxHp}\n` +
-        `Your HP: ${combatState.character.currentHp}/${combatState.character.maxHp}\n` +
-        `Your SP: ${combatState.character.currentSp}/${combatState.character.maxSp}`
-      );
+      if (combatState && combatState.enemy && combatState.character) {
+        await ctx.reply(
+          `Enemy HP: ${combatState.enemy.currentHp}/${combatState.enemy.maxHp}\n` +
+          `Your HP: ${combatState.character.currentHp}/${combatState.character.maxHp}\n` +
+          `Your SP: ${combatState.character.currentSp}/${combatState.character.maxSp}`
+        );
+      } else {
+        await ctx.reply('Combat information could not be retrieved.');
+      }
     }
   } else if (confirmation === 'no' || confirmation === 'n' || confirmation === 'cancel') {
     // Cancel skill use
