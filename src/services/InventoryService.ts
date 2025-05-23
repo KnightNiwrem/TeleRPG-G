@@ -1,6 +1,7 @@
 import { db } from '../database/kysely.js';
 import { InventoryItem, Item } from '../core/types.js';
 import { EquipmentSlot } from '../core/enums.js';
+import { sql } from 'kysely';
 
 /**
  * InventoryService - Handles inventory-related operations
@@ -334,7 +335,7 @@ export class InventoryService {
         'items.equipment_slot as equipmentSlot'
       ])
       .where('inventory_items.character_id', '=', character.id)
-      .where(db.raw('LOWER(items.name)'), 'like', `%${itemName.toLowerCase()}%`)
+      .where(sql`LOWER(items.name)`, 'like', `%${itemName.toLowerCase()}%`)
       .executeTakeFirst();
     
     if (!inventoryItem) {
@@ -406,7 +407,7 @@ export class InventoryService {
         'items.name'
       ])
       .where('inventory_items.character_id', '=', character.id)
-      .where('items.equipment_slot', '=', slotName)
+      .where('items.equipment_slot', '=', slotName as any)
       .where('inventory_items.equipped', '=', true)
       .executeTakeFirst();
     
@@ -455,7 +456,7 @@ export class InventoryService {
         'items.use_effect as useEffect'
       ])
       .where('inventory_items.character_id', '=', character.id)
-      .where(db.raw('LOWER(items.name)'), 'like', `%${itemName.toLowerCase()}%`)
+      .where(sql`LOWER(items.name)`, 'like', `%${itemName.toLowerCase()}%`)
       .executeTakeFirst();
     
     if (!item) {
@@ -543,7 +544,7 @@ export class InventoryService {
         'items.name'
       ])
       .where('inventory_items.character_id', '=', character.id)
-      .where(db.raw('LOWER(items.name)'), 'like', `%${itemName.toLowerCase()}%`)
+      .where(sql`LOWER(items.name)`, 'like', `%${itemName.toLowerCase()}%`)
       .executeTakeFirst();
     
     if (!inventoryItem) {

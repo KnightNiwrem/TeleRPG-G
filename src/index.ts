@@ -6,13 +6,20 @@ import { db } from './database/kysely.js';
 // Check database version and connection
 async function checkDatabaseConnection() {
   try {
-    const result = await db.executeQuery(
-      db.selectFrom('information_schema.tables')
-        .select(db.raw('version() as version'))
-        .limit(1)
-        .compile()
-    );
+    // Simply use a direct query without typing complexities
+    const { Pool } = await import('pg');
+    const pool = new Pool({
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT || '5432'),
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME
+    });
+    
+    const result = await pool.query('SELECT version()');
     console.log(`Connected to PostgreSQL: ${result.rows[0]?.version || 'Unknown version'}`);
+    
+    await pool.end();
     return true;
   } catch (error) {
     console.error('Database connection error:', error);
