@@ -169,7 +169,9 @@ export class SkillService {
       .values({
         character_id: character.id,
         skill_id: skillId,
-        last_used: null
+        last_used: null,
+        created_at: new Date(),
+        updated_at: new Date()
       })
       .execute();
     
