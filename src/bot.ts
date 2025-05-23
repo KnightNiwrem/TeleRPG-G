@@ -1,0 +1,31 @@
+import { Bot, GrammyError, HttpError } from 'grammy';
+import { StateService } from './services/StateService';
+import { registerCommandHandlers } from './handlers';
+
+// Ensure bot token is provided
+if (!process.env.BOT_TOKEN) {
+  throw new Error('BOT_TOKEN is not defined in the environment variables');
+}
+
+// Create bot instance
+export const bot = new Bot(process.env.BOT_TOKEN);
+
+// Initialize state service (used instead of grammyjs sessions)
+export const stateService = new StateService();
+
+// Register command handlers
+registerCommandHandlers(bot);
+
+// Error handling
+bot.catch((err) => {
+  const ctx = err.ctx;
+  console.error(`Error while handling update ${ctx.update.update_id}:`);
+  
+  if (err instanceof GrammyError) {
+    console.error('Error in request:', err.description);
+  } else if (err instanceof HttpError) {
+    console.error('Could not contact Telegram:', err);
+  } else {
+    console.error('Unknown error:', err);
+  }
+});
