@@ -59,7 +59,7 @@ export async function startLongRest(userId: number, duration: number = 300): Pro
     removeOnFail: false
   });
   
-  return job.id;
+  return job.id as string;
 }
 
 /**

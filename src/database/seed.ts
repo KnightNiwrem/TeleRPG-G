@@ -51,6 +51,8 @@ async function seedAreas() {
       type: AreaType.TOWN,
       level_requirement: 1,
       parent_area_id: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Whispering Woods',
@@ -58,6 +60,8 @@ async function seedAreas() {
       type: AreaType.FOREST,
       level_requirement: 1,
       parent_area_id: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Shadowed Caverns',
@@ -65,6 +69,8 @@ async function seedAreas() {
       type: AreaType.CAVE,
       level_requirement: 3,
       parent_area_id: 2,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Mistpeak Mountains',
@@ -72,6 +78,8 @@ async function seedAreas() {
       type: AreaType.MOUNTAIN,
       level_requirement: 5,
       parent_area_id: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Forgotten Ruins',
@@ -79,6 +87,8 @@ async function seedAreas() {
       type: AreaType.DUNGEON,
       level_requirement: 8,
       parent_area_id: 4,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 
