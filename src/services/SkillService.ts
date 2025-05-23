@@ -94,11 +94,11 @@ export class SkillService {
         ])
       )
       .where('level_requirement', '<=', character.level)
-      .whereNotIn('id', learnedIds.length > 0 ? learnedIds : [-1]) // Avoid empty IN clause
+      .where('id', 'not in', learnedIds.length > 0 ? learnedIds : [-1]) // Avoid empty IN clause
       .execute();
     
     // Map to Skill interface
-    return availableSkills.map((skill) => ({
+    return availableSkills.map((skill: any) => ({
       id: skill.id,
       name: skill.name,
       description: skill.description,
