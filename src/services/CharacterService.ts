@@ -134,6 +134,8 @@ export class CharacterService {
       wisdom,
       vitality,
       area_id: 1, // Start in Greenhaven Outskirts
+      created_at: new Date(),
+      updated_at: new Date(),
     };
     
     const [dbCharacter] = await this.db

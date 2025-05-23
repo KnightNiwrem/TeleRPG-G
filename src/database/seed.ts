@@ -226,6 +226,8 @@ async function seedNPCs() {
       area_id: 1, // Aetherton
       dialogue: 'Welcome to Aetherton, young adventurer! The world is in need of heroes like you.',
       is_quest_giver: true,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Merchant Gilda',
@@ -236,6 +238,8 @@ async function seedNPCs() {
       area_id: 1, // Aetherton
       dialogue: 'Looking to buy or sell something? I have the finest goods in all of Aetherton!',
       is_quest_giver: false,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Ranger Elwin',
@@ -246,6 +250,8 @@ async function seedNPCs() {
       area_id: 2, // Whispering Woods
       dialogue: 'The woods have been more dangerous lately. Be careful as you explore, and watch out for goblins.',
       is_quest_giver: true,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Miner Durin',
@@ -256,6 +262,8 @@ async function seedNPCs() {
       area_id: 3, // Shadowed Caverns
       dialogue: 'These caves hold rich minerals, but also many dangers. Could you help me gather some resources?',
       is_quest_giver: true,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Hermit Kaela',
@@ -266,6 +274,8 @@ async function seedNPCs() {
       area_id: 4, // Mistpeak Mountains
       dialogue: "Few make it this far up the mountain. I've been studying the ancient ruins nearby. There's power there... and danger.",
       is_quest_giver: true,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 
@@ -296,6 +306,8 @@ async function seedSkills() {
       cooldown: 0,
       class_restriction: ClassType.WARRIOR,
       level_requirement: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Battle Cry',
@@ -307,6 +319,8 @@ async function seedSkills() {
       cooldown: 3,
       class_restriction: ClassType.WARRIOR,
       level_requirement: 3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     
     // Mage skills
@@ -320,6 +334,8 @@ async function seedSkills() {
       cooldown: 0,
       class_restriction: ClassType.MAGE,
       level_requirement: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Frost Nova',
@@ -331,6 +347,8 @@ async function seedSkills() {
       cooldown: 2,
       class_restriction: ClassType.MAGE,
       level_requirement: 3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     
     // Rogue skills
@@ -344,6 +362,8 @@ async function seedSkills() {
       cooldown: 1,
       class_restriction: ClassType.ROGUE,
       level_requirement: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Smoke Bomb',
@@ -355,6 +375,8 @@ async function seedSkills() {
       cooldown: 3,
       class_restriction: ClassType.ROGUE,
       level_requirement: 3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     
     // Cleric skills
@@ -368,6 +390,8 @@ async function seedSkills() {
       cooldown: 1,
       class_restriction: ClassType.CLERIC,
       level_requirement: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Smite',
@@ -379,6 +403,8 @@ async function seedSkills() {
       cooldown: 0,
       class_restriction: ClassType.CLERIC,
       level_requirement: 3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 
@@ -409,6 +435,8 @@ async function seedItems() {
       stat_bonus: { strength: 1 },
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Wooden Staff',
@@ -420,6 +448,8 @@ async function seedItems() {
       stat_bonus: { intelligence: 1 },
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Leather Armor',
@@ -431,6 +461,8 @@ async function seedItems() {
       stat_bonus: { max_hp: 5 },
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     
     // Consumables
@@ -444,6 +476,8 @@ async function seedItems() {
       stat_bonus: null,
       usable: true,
       use_effect: 'Restores 20 HP',
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Mana Potion',
@@ -455,6 +489,8 @@ async function seedItems() {
       stat_bonus: null,
       usable: true,
       use_effect: 'Restores 20 SP',
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     
     // Materials
@@ -468,6 +504,8 @@ async function seedItems() {
       stat_bonus: null,
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Spider Silk',
@@ -479,6 +517,8 @@ async function seedItems() {
       stat_bonus: null,
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 
@@ -509,6 +549,8 @@ async function seedQuests() {
       area_id: 1, // Aetherton
       npc_id: 1, // Elder Thorne
       prerequisite_quest_ids: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).returning('id').execute();
 
@@ -520,6 +562,8 @@ async function seedQuests() {
       type: ObjectiveType.EXPLORE,
       target_id: 2, // Whispering Woods area
       target: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 
@@ -535,6 +579,8 @@ async function seedQuests() {
       area_id: 2, // Whispering Woods
       npc_id: 3, // Ranger Elwin
       prerequisite_quest_ids: [firstQuest.id],
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).returning('id').execute();
 
@@ -546,6 +592,8 @@ async function seedQuests() {
       type: ObjectiveType.KILL,
       target_id: 1, // Forest Wolf monster
       target: 3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       quest_id: secondQuest.id,
@@ -553,6 +601,8 @@ async function seedQuests() {
       type: ObjectiveType.COLLECT,
       target_id: 6, // Wolf Pelt item
       target: 3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 

@@ -48,7 +48,7 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .addColumn('area_id', 'integer', (col) => col.notNull())
     .addColumn('exp_reward', 'integer', (col) => col.notNull())
     .addColumn('gold_reward', 'integer', (col) => col.notNull())
-    .addColumn('item_drop_rate', 'float', (col) => col.notNull().defaultTo(0.1))
+    .addColumn('item_drop_rate', 'real', (col) => col.notNull().defaultTo(0.1))
     .addColumn('created_at', 'timestamp', (col) => 
       col.notNull().defaultTo(sql`now()`)
     )

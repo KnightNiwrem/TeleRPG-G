@@ -106,7 +106,9 @@ export class InventoryService {
           character_id: character.id,
           item_id: itemId,
           quantity,
-          equipped: false
+          equipped: false,
+          created_at: new Date(),
+          updated_at: new Date()
         })
         .execute();
     }
