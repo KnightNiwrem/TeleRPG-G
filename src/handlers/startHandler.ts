@@ -36,7 +36,7 @@ export async function startHandler(ctx: Context) {
     );
   } else {
     // If the user doesn't have a character, start the character creation process
-    stateService.setUserState(userId, {
+    await stateService.setUserState(userId, {
       action: 'creating_character',
       step: 'choose_class',
     });

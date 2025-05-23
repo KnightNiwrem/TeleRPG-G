@@ -61,7 +61,7 @@ export async function inventoryHandler(ctx: Context) {
   await ctx.reply(inventoryText, { reply_markup: keyboard });
   
   // Set user state
-  stateService.setUserState(userId, {
+  await stateService.setUserState(userId, {
     action: 'inventory_menu',
     step: 'view_inventory',
   });

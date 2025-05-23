@@ -45,7 +45,7 @@ export async function combatHandler(ctx: Context) {
     await ctx.reply('Searching for enemies...');
     
     // Set state to indicate searching for combat
-    stateService.setUserState(userId, {
+    await stateService.setUserState(userId, {
       action: 'searching_combat',
       step: 'initial',
     });
@@ -56,7 +56,7 @@ export async function combatHandler(ctx: Context) {
       
       if (!enemy) {
         await ctx.reply('No enemies found. Try exploring a different area!');
-        stateService.clearUserState(userId);
+        await stateService.clearUserState(userId);
         return;
       }
       
@@ -77,7 +77,7 @@ export async function combatHandler(ctx: Context) {
       );
       
       // Update state to in combat
-      stateService.setUserState(userId, {
+      await stateService.setUserState(userId, {
         action: 'in_combat',
         step: 'turn_start',
         enemyId: enemy.id,
