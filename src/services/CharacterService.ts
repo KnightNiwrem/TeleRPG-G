@@ -320,4 +320,28 @@ export class CharacterService {
     const userId = character.user_id;
     return this.getCharacter(userId) as Promise<Character>;
   }
+  
+  
+  // Handle battle rewards differently, using string access to handle optional method
+  async handleBattleRewards(characterId: number, expGain: number): Promise<void> {
+    // Get character
+    const character = await this.db
+      .selectFrom("characters")
+      .select("experience")
+      .where("id", "=", characterId)
+      .executeTakeFirst();
+    
+    if (!character) {
+      return;
+    }
+    
+    // Update experience
+    await this.db
+      .updateTable("characters")
+      .set({
+        experience: character.experience + expGain
+      })
+      .where("id", "=", characterId)
+      .execute();
+  }
 }

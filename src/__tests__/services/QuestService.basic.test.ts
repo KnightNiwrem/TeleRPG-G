@@ -1,3 +1,23 @@
+// Mock the env module
+jest.mock('../../config/env', () => ({
+  validateEnv: jest.fn().mockReturnValue({
+    DATABASE_URL: 'mock-db-url',
+    REDIS_HOST: 'localhost',
+    REDIS_PORT: '6379',
+    REDIS_PASSWORD: '',
+    TELEGRAM_BOT_TOKEN: 'mock-token',
+    NODE_ENV: 'test'
+  }),
+  env: {
+    DATABASE_URL: 'mock-db-url',
+    REDIS_HOST: 'localhost',
+    REDIS_PORT: '6379',
+    REDIS_PASSWORD: '',
+    TELEGRAM_BOT_TOKEN: 'mock-token',
+    NODE_ENV: 'test'
+  }
+}));
+
 // QuestService.basic.test.ts
 import { QuestService } from '../../services/QuestService';
 

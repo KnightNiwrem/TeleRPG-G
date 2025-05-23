@@ -309,7 +309,8 @@ export class CombatService {
     if (enemy.currentHp <= 0) {
       // End combat and award experience
       await this.endCombat(userId);
-      await this.characterService.addExperience(combatState.character.id, enemy.expReward);
+      // Add experience using safe method
+      await this.characterService.handleBattleRewards(combatState.character.id, enemy.expReward);
       
       return {
         state: { ...combatState, enemy },
