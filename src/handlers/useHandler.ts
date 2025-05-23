@@ -23,7 +23,7 @@ export async function useHandler(ctx: Context) {
 
   // Try to use the item
   try {
-    const result = await inventoryService.useItem(userId, itemName);
+    const result = await inventoryService.useItemByName(userId, itemName);
     
     if (result.success) {
       await ctx.reply(`${itemName} used successfully! ${result.message}`);
