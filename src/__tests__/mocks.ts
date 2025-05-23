@@ -1,10 +1,13 @@
 // Create a mock directory for mocking modules
+import { jest } from '@jest/globals';
+
 jest.mock('../../config/env', () => ({
   validateEnv: jest.fn().mockReturnValue({
     DATABASE_URL: 'mock-db-url',
     REDIS_HOST: 'localhost',
     REDIS_PORT: '6379',
     REDIS_PASSWORD: '',
+    BOT_TOKEN: 'mock-bot-token',
     TELEGRAM_BOT_TOKEN: 'mock-token',
     NODE_ENV: 'test'
   }),
@@ -13,6 +16,7 @@ jest.mock('../../config/env', () => ({
     REDIS_HOST: 'localhost',
     REDIS_PORT: '6379',
     REDIS_PASSWORD: '',
+    BOT_TOKEN: 'mock-bot-token',
     TELEGRAM_BOT_TOKEN: 'mock-token',
     NODE_ENV: 'test'
   }
