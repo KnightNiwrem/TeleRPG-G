@@ -1,5 +1,5 @@
 import { Generated, ColumnType, Insertable, Selectable, Updateable } from 'kysely';
-import { ClassType, EntityType, EquipmentSlot, ItemType, SkillType, AreaType, QuestType, ObjectiveType } from '../core/enums';
+import { ClassType, EntityType, EquipmentSlot, ItemType, SkillType, AreaType, QuestType, ObjectiveType } from '../core/enums.js';
 
 // Define database schema types for Kysely
 

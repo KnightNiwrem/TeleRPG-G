@@ -1,7 +1,7 @@
 import { Bot, GrammyError, HttpError } from 'grammy';
-import { StateService } from './services/StateService';
-import { registerCommandHandlers } from './handlers';
-import { env } from './config/env';
+import { StateService } from './services/StateService.js';
+import { registerCommandHandlers } from './handlers/index.js';
+import { env } from './config/env.js';
 
 // Create bot instance
 export const bot = new Bot(env.BOT_TOKEN);

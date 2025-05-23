@@ -1,6 +1,6 @@
 import { Context } from 'grammy';
-import { stateService } from '../bot';
-import { CombatService } from '../services/CombatService';
+import { stateService } from '../bot.js';
+import { CombatService } from '../services/CombatService.js';
 import { InlineKeyboard } from 'grammy';
 
 const combatService = new CombatService();

@@ -1,9 +1,9 @@
 import { Context } from 'grammy';
-import { stateService } from '../bot';
-import { CombatService } from '../services/CombatService';
-import { SkillService } from '../services/SkillService';
-import { InventoryService } from '../services/InventoryService';
-import { QuestService } from '../services/QuestService';
+import { stateService } from '../bot.js';
+import { CombatService } from '../services/CombatService.js';
+import { SkillService } from '../services/SkillService.js';
+import { InventoryService } from '../services/InventoryService.js';
+import { QuestService } from '../services/QuestService.js';
 
 const combatService = new CombatService();
 const skillService = new SkillService();

@@ -1,7 +1,7 @@
 import { Context } from 'grammy';
-import { stateService } from '../bot';
-import { CombatService } from '../services/CombatService';
-import { AreaService } from '../services/AreaService';
+import { stateService } from '../bot.js';
+import { CombatService } from '../services/CombatService.js';
+import { AreaService } from '../services/AreaService.js';
 
 const combatService = new CombatService();
 const areaService = new AreaService();

@@ -1,7 +1,7 @@
-import { db as defaultDb } from '../database/kysely';
-import { Monster, Character } from '../core/types';
-import { CharacterService } from './CharacterService';
-import { AreaService } from './AreaService';
+import { db as defaultDb } from '../database/kysely.js';
+import { Monster, Character } from '../core/types.js';
+import { CharacterService } from './CharacterService.js';
+import { AreaService } from './AreaService.js';
 import Redis from 'ioredis';
 import { InlineKeyboard } from 'grammy';
 
@@ -22,10 +22,10 @@ export class CombatService {
   private readonly expiry = 1800; // 30 minutes in seconds
   private characterService: CharacterService;
   private areaService: AreaService;
-  private db: any;
+  private db: typeof defaultDb;
 
   constructor(
-    dbInstance: any = defaultDb,
+    dbInstance: typeof defaultDb = defaultDb,
     redisInstance?: Redis,
     characterService?: CharacterService,
     areaService?: AreaService

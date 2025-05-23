@@ -1,6 +1,6 @@
-import { db as defaultDb } from '../database/kysely';
-import { Area, Monster, Character } from '../core/types';
-import { CharacterService } from './CharacterService';
+import { db as defaultDb } from '../database/kysely.js';
+import { Area, Monster, Character } from '../core/types.js';
+import { CharacterService } from './CharacterService.js';
 
 /**
  * AreaService - Handles area-related operations

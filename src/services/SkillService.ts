@@ -1,5 +1,5 @@
-import { db } from '../database/kysely';
-import { Skill, CharacterSkill } from '../core/types';
+import { db } from '../database/kysely.js';
+import { Skill, CharacterSkill } from '../core/types.js';
 
 /**
  * SkillService - Handles skill-related operations

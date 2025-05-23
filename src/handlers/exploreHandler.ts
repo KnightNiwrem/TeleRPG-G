@@ -1,7 +1,7 @@
 import { Context } from 'grammy';
-import { stateService } from '../bot';
-import { AreaService } from '../services/AreaService';
-import { CharacterService } from '../services/CharacterService';
+import { stateService } from '../bot.js';
+import { AreaService } from '../services/AreaService.js';
+import { CharacterService } from '../services/CharacterService.js';
 import { InlineKeyboard } from 'grammy';
 
 const areaService = new AreaService();

@@ -1,6 +1,6 @@
-import { db } from '../database/kysely';
-import { InventoryItem, Item } from '../core/types';
-import { EquipmentSlot } from '../core/enums';
+import { db } from '../database/kysely.js';
+import { InventoryItem, Item } from '../core/types.js';
+import { EquipmentSlot } from '../core/enums.js';
 
 /**
  * InventoryService - Handles inventory-related operations

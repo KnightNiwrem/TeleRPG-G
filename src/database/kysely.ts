@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from 'kysely';
 import { Pool } from 'pg';
-import { Database } from './schema';
-import { env } from '../config/env';
+import { Database } from './schema.js';
+import { env } from '../config/env.js';
 
 // Initialize database connection pool
 const pool = new Pool({

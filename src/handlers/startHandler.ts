@@ -1,10 +1,10 @@
 import { Context } from 'grammy';
-import { stateService } from '../bot';
-import { CharacterService } from '../services/CharacterService';
+import { stateService } from '../bot.js';
+import { CharacterService } from '../services/CharacterService.js';
 import { InlineKeyboard } from 'grammy';
 
 // Import character-related types
-import { ClassType } from '../core/enums';
+import { ClassType } from '../core/enums.js';
 
 const characterService = new CharacterService();
 
