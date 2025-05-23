@@ -7,8 +7,8 @@ import { AreaService } from '../../services/AreaService.js';
 import { EntityType, ClassType } from '../../core/enums.js';
 
 // Mock the CharacterService and AreaService
-jest.mock('../../services/CharacterService');
-jest.mock('../../services/AreaService');
+jest.mock('../../services/CharacterService.js');
+jest.mock('../../services/AreaService.js');
 
 describe('CombatService', () => {
   let combatService: CombatService;
@@ -188,8 +188,8 @@ describe('CombatService', () => {
         round: 1
       });
       
-      // Mock setPlayerTurn
-      jest.spyOn(combatService as any, 'setEnemyTurn').mockResolvedValueOnce(undefined);
+      // Mock redis.set for state update
+      mockRedis.set = jest.fn().mockResolvedValueOnce('OK');
       
       const result = await combatService.processPlayerAttack(123);
       
@@ -198,7 +198,7 @@ describe('CombatService', () => {
       
       expect(result.state.enemy.currentHp).toBeLessThan(20);
       expect(result.state.turn).toBe('enemy');
-      expect(result.message).toContain('hit the Goblin for');
+      expect(result.message).toContain('You hit Goblin for');
     });
 
     test('should handle defeating the enemy', async () => {
@@ -227,11 +227,8 @@ describe('CombatService', () => {
       // Mock endCombat
       jest.spyOn(combatService as any, 'endCombat').mockResolvedValueOnce(undefined);
       
-      // Mock addExperience
-      mockCharacterService.addExperience = jest.fn().mockResolvedValueOnce({
-        newLevel: 1,
-        leveledUp: false
-      });
+      // Mock handleBattleRewards
+      mockCharacterService.handleBattleRewards = jest.fn().mockResolvedValueOnce(undefined);
       
       const result = await combatService.processPlayerAttack(123);
       
@@ -239,8 +236,8 @@ describe('CombatService', () => {
       global.Math.random = originalRandom;
       
       expect(result.state.enemy.currentHp).toBe(0);
-      expect(result.message).toContain('defeated the Goblin');
-      expect(mockCharacterService.addExperience).toHaveBeenCalledWith(1, 10);
+      expect(result.message).toContain('The Goblin is defeated');
+      expect(mockCharacterService.handleBattleRewards).toHaveBeenCalledWith(1, 10);
     });
   });
 });
