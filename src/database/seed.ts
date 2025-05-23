@@ -240,7 +240,7 @@ async function seedNPCs() {
       max_hp: 180,
       current_hp: 180,
       area_id: 4, // Mistpeak Mountains
-      dialogue: 'Few make it this far up the mountain. I've been studying the ancient ruins nearby. There's power there... and danger.',
+      dialogue: "Few make it this far up the mountain. I've been studying the ancient ruins nearby. There's power there... and danger.",
       is_quest_giver: true,
     },
   ]).execute();

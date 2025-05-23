@@ -31,15 +31,15 @@ export async function messageHandler(ctx: Context) {
 
   // Handle based on current action
   switch (state.action) {
-    case 'AWAITING_TARGET_FOR_ATTACK':
-      await handleAttackTarget(ctx, userId, messageText);
-      break;
-    case 'AWAITING_SKILL_CONFIRMATION':
-      await handleSkillConfirmation(ctx, userId, messageText, state.skillId);
-      break;
-    default:
-      // No special handling for this state
-      break;
+  case 'AWAITING_TARGET_FOR_ATTACK':
+    await handleAttackTarget(ctx, userId, messageText);
+    break;
+  case 'AWAITING_SKILL_CONFIRMATION':
+    await handleSkillConfirmation(ctx, userId, messageText, state.skillId);
+    break;
+  default:
+    // No special handling for this state
+    break;
   }
 }
 

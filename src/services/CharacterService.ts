@@ -135,7 +135,6 @@ export class CharacterService {
       vitality,
       area_id: 1, // Start in Greenhaven Outskirts
     };
-    };
     
     const [dbCharacter] = await this.db
       .insertInto('characters')
@@ -322,7 +321,11 @@ export class CharacterService {
   }
   
   
-  // Handle battle rewards differently, using string access to handle optional method
+  /**
+   * Handle battle rewards separately
+   * @param characterId Character ID
+   * @param expGain Experience points to add
+   */
   async handleBattleRewards(characterId: number, expGain: number): Promise<void> {
     // Get character
     const character = await this.db
