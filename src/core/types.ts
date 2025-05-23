@@ -21,6 +21,7 @@ export interface Character extends Entity {
   intelligence: number;
   dexterity: number;
   wisdom: number;
+  vitality: number;
   areaId: number;
 }
 
@@ -138,7 +139,10 @@ export type UserStateAction =
   | 'searching_combat' 
   | 'skill_menu' 
   | 'inventory_menu' 
-  | 'quest_menu';
+  | 'quest_menu'
+  | 'AWAITING_TARGET'
+  | 'AWAITING_SKILL_CONFIRMATION'
+  | 'AWAITING_TARGET_FOR_ATTACK';
 
 export type UserStateStep = 
   | 'initial' 
@@ -150,7 +154,9 @@ export type UserStateStep =
   | 'turn_action' 
   | 'view_skills' 
   | 'view_inventory' 
-  | 'view_quests';
+  | 'view_quests'
+  | 'select_target'
+  | 'confirm_action';
 
 export interface UserState {
   action: UserStateAction;

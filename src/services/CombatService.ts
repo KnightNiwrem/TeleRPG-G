@@ -1,7 +1,9 @@
 import { db } from '../database/kysely';
 import { Monster, Character } from '../core/types';
 import { CharacterService } from './CharacterService';
+import { AreaService } from './AreaService';
 import Redis from 'ioredis';
+import { InlineKeyboard } from 'grammy';
 
 // Interface for combat state
 interface CombatState {
@@ -19,6 +21,7 @@ export class CombatService {
   private readonly prefix = 'combat_state:';
   private readonly expiry = 1800; // 30 minutes in seconds
   private characterService: CharacterService;
+  private areaService: AreaService;
 
   constructor() {
     // Initialize Redis connection
@@ -29,6 +32,7 @@ export class CombatService {
     });
 
     this.characterService = new CharacterService();
+    this.areaService = new AreaService();
   }
 
   /**
@@ -104,6 +108,110 @@ export class CombatService {
       expReward: dbMonster.exp_reward,
       goldReward: dbMonster.gold_reward,
       itemDropRate: dbMonster.item_drop_rate
+    };
+  }
+
+  /**
+   * Find a specific enemy by name in the character's current area
+   * @param userId Telegram user ID
+   * @param targetName Name of the target enemy
+   * @returns Monster object or null if not found
+   */
+  async findEnemyByName(userId: number, targetName: string): Promise<Monster | null> {
+    // Get character's current area
+    const character = await this.characterService.getCharacter(userId);
+    
+    if (!character) {
+      return null;
+    }
+    
+    // Find monsters in the current area with matching name (case insensitive)
+    const dbMonsters = await db
+      .selectFrom('monsters')
+      .selectAll()
+      .where('area_id', '=', character.areaId)
+      .where(db.raw('LOWER(name)'), 'like', `%${targetName.toLowerCase()}%`)
+      .execute();
+    
+    if (dbMonsters.length === 0) {
+      return null;
+    }
+    
+    // Return the first matching monster
+    const dbMonster = dbMonsters[0];
+    
+    // Map database columns to Monster interface
+    return {
+      id: dbMonster.id,
+      name: dbMonster.name,
+      type: dbMonster.type,
+      level: dbMonster.level,
+      maxHp: dbMonster.max_hp,
+      currentHp: dbMonster.current_hp,
+      areaId: dbMonster.area_id,
+      expReward: dbMonster.exp_reward,
+      goldReward: dbMonster.gold_reward,
+      itemDropRate: dbMonster.item_drop_rate
+    };
+  }
+
+  /**
+   * Initiate combat between a character and a target monster by name
+   * @param userId Telegram user ID
+   * @param targetName Name of the target enemy
+   * @returns Result with success status, message, and combat data if successful
+   */
+  async initiateCombat(userId: number, targetName: string): Promise<{
+    success: boolean;
+    message: string;
+    character?: Character;
+    enemy?: Monster;
+    keyboard?: InlineKeyboard;
+  }> {
+    // Check if already in combat
+    const inCombat = await this.isInCombat(userId);
+    if (inCombat) {
+      return {
+        success: false,
+        message: 'You are already in combat!'
+      };
+    }
+    
+    // Find the target monster
+    const enemy = await this.findEnemyByName(userId, targetName);
+    if (!enemy) {
+      return {
+        success: false,
+        message: `Could not find "${targetName}" in this area. Try exploring or check the spelling.`
+      };
+    }
+    
+    // Get character data
+    const character = await this.characterService.getCharacter(userId);
+    if (!character) {
+      return {
+        success: false,
+        message: 'Error retrieving character data.'
+      };
+    }
+    
+    // Start combat
+    await this.startCombat(userId, enemy.id);
+    
+    // Create combat options keyboard
+    const keyboard = new InlineKeyboard()
+      .text('Attack', 'combat_attack')
+      .text('Use Skill', 'combat_skill')
+      .row()
+      .text('Use Item', 'combat_item')
+      .text('Flee', 'combat_flee');
+    
+    return {
+      success: true,
+      message: 'Combat initiated successfully',
+      character,
+      enemy,
+      keyboard
     };
   }
 

@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { UserState } from '../core/types';
+import { UserState, UserStateAction } from '../core/types';
 
 /**
  * StateService - Handles user state management without using grammyjs sessions
@@ -28,8 +28,9 @@ export class StateService {
    * Set user state in Redis
    * @param userId Telegram user ID
    * @param state State object to store
+   * @param ttlSeconds Optional TTL in seconds (defaults to this.expiry)
    */
-  async setUserState(userId: number, state: UserState): Promise<void> {
+  async setUserState(userId: number, state: UserState, ttlSeconds?: number): Promise<void> {
     const key = this.getUserKey(userId);
     
     // Add timestamp if not present
@@ -37,7 +38,10 @@ export class StateService {
       state.timestamp = Date.now();
     }
     
-    await this.redis.set(key, JSON.stringify(state), 'EX', this.expiry);
+    // Use provided TTL or default expiry
+    const expiry = ttlSeconds || this.expiry;
+    
+    await this.redis.set(key, JSON.stringify(state), 'EX', expiry);
   }
 
   /**
@@ -74,8 +78,9 @@ export class StateService {
    * Update specific fields in user state
    * @param userId Telegram user ID
    * @param updates Partial state updates
+   * @param ttlSeconds Optional TTL in seconds
    */
-  async updateUserState(userId: number, updates: Partial<UserState>): Promise<void> {
+  async updateUserState(userId: number, updates: Partial<UserState>, ttlSeconds?: number): Promise<void> {
     const currentState = await this.getUserState(userId);
     
     if (!currentState) {
@@ -84,7 +89,7 @@ export class StateService {
         action: 'idle',
         step: 'initial',
         ...updates,
-      });
+      }, ttlSeconds);
       return;
     }
     
@@ -95,7 +100,58 @@ export class StateService {
       timestamp: Date.now(), // Update timestamp
     };
     
-    await this.setUserState(userId, newState);
+    await this.setUserState(userId, newState, ttlSeconds);
+  }
+
+  /**
+   * Get player's current interaction state for multi-step commands
+   * @param playerId Telegram user ID
+   * @returns The current action and context
+   */
+  async getState(playerId: number): Promise<{
+    currentAction: string | null;
+    actionContext: any | null;
+    expiresAt: number | null;
+  }> {
+    const state = await this.getUserState(playerId);
+    
+    if (!state) {
+      return {
+        currentAction: null,
+        actionContext: null,
+        expiresAt: null,
+      };
+    }
+    
+    // Get TTL for the key
+    const key = this.getUserKey(playerId);
+    const ttl = await this.redis.ttl(key);
+    const expiresAt = ttl > 0 ? Date.now() + (ttl * 1000) : null;
+    
+    return {
+      currentAction: state.action,
+      actionContext: state.data || {},
+      expiresAt,
+    };
+  }
+
+  /**
+   * Set player's interaction state for multi-step commands
+   * @param playerId Telegram user ID
+   * @param action Current action (e.g., 'AWAITING_TARGET')
+   * @param context Action context data
+   * @param ttlSeconds Optional TTL in seconds
+   */
+  async setState(playerId: number, action: string, context: any, ttlSeconds?: number): Promise<void> {
+    await this.setUserState(
+      playerId,
+      {
+        action: action as UserStateAction,
+        step: 'initial',
+        data: context,
+      },
+      ttlSeconds
+    );
   }
 
   /**

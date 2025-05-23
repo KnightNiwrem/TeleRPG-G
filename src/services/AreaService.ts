@@ -1,10 +1,17 @@
 import { db } from '../database/kysely';
-import { Area } from '../core/types';
+import { Area, Monster, Character } from '../core/types';
+import { CharacterService } from './CharacterService';
 
 /**
  * AreaService - Handles area-related operations
  */
 export class AreaService {
+  private characterService: CharacterService;
+
+  constructor() {
+    this.characterService = new CharacterService();
+  }
+
   /**
    * Get all areas
    * @returns Array of all areas
@@ -147,5 +154,102 @@ export class AreaService {
     }));
     
     return connectedAreas;
+  }
+
+  /**
+   * Get all enemies in the character's current area
+   * @param userId Telegram user ID
+   * @returns Array of monsters in the area
+   */
+  async getEnemiesInArea(userId: number): Promise<Monster[]> {
+    // Get character's current area
+    const character = await this.characterService.getCharacter(userId);
+    
+    if (!character) {
+      return [];
+    }
+    
+    // Get monsters in the area
+    const dbMonsters = await db
+      .selectFrom('monsters')
+      .selectAll()
+      .where('area_id', '=', character.areaId)
+      .execute();
+    
+    // Map database monsters to Monster interface
+    return dbMonsters.map(monster => ({
+      id: monster.id,
+      name: monster.name,
+      type: monster.type,
+      level: monster.level,
+      maxHp: monster.max_hp,
+      currentHp: monster.current_hp,
+      areaId: monster.area_id,
+      expReward: monster.exp_reward,
+      goldReward: monster.gold_reward,
+      itemDropRate: monster.item_drop_rate
+    }));
+  }
+
+  /**
+   * Describe the current area, including exits, NPCs, monsters, and other players
+   * @param userId Telegram user ID
+   * @returns Formatted area description
+   */
+  async describeArea(userId: number): Promise<{
+    areaName: string;
+    description: string;
+    exits: string[];
+    npcs: string[];
+    monsters: string[];
+    players: string[];
+  }> {
+    // Get character's current area
+    const character = await this.characterService.getCharacter(userId);
+    
+    if (!character) {
+      throw new Error('Character not found');
+    }
+    
+    // Get area details
+    const area = await this.getArea(character.areaId);
+    if (!area) {
+      throw new Error('Area not found');
+    }
+    
+    // Get connected areas (exits)
+    const connectedAreas = await this.getConnectedAreas(area.id);
+    const exits = connectedAreas.map(connectedArea => connectedArea.name);
+    
+    // Get NPCs in the area
+    const npcs = await db
+      .selectFrom('npcs')
+      .select('name')
+      .where('area_id', '=', area.id)
+      .execute();
+    
+    // Get monsters in the area
+    const monsters = await db
+      .selectFrom('monsters')
+      .select('name')
+      .where('area_id', '=', area.id)
+      .execute();
+    
+    // Get other players in the area
+    const otherPlayers = await db
+      .selectFrom('characters')
+      .select('name')
+      .where('area_id', '=', area.id)
+      .where('user_id', '!=', character.userId)
+      .execute();
+    
+    return {
+      areaName: area.name,
+      description: area.description,
+      exits: exits,
+      npcs: npcs.map(npc => npc.name),
+      monsters: monsters.map(monster => monster.name),
+      players: otherPlayers.map(player => player.name)
+    };
   }
 }

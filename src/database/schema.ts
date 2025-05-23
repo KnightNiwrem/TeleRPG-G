@@ -20,6 +20,7 @@ export interface CharactersTable {
   intelligence: number;
   dexterity: number;
   wisdom: number;
+  vitality: number;
   area_id: number;
   created_at: ColumnType<Date, Date | string, never>;
   updated_at: ColumnType<Date, Date | string, Date | string>;
@@ -240,5 +241,15 @@ export type NewCharacterQuest = Insertable<CharacterQuestsTable>;
 export type CharacterQuestUpdate = Updateable<CharacterQuestsTable>;
 
 export type CharacterQuestObjective = Selectable<CharacterQuestObjectivesTable>;
-export type NewCharacterQuestObjective = Insertable<CharacterQuestObjectivesTable>;
-export type CharacterQuestObjectiveUpdate = Updateable<CharacterQuestObjectivesTable>;
+// Player interaction states table
+export interface PlayerInteractionStatesTable {
+  player_id: number;
+  current_action: string;
+  action_context: ColumnType<Record<string, any>, string | Record<string, any>, string | Record<string, any>>;
+  expires_at: ColumnType<Date, Date | string | null, Date | string | null>;
+  created_at: ColumnType<Date, Date | string, never>;
+  updated_at: ColumnType<Date, Date | string, Date | string>;
+}
+
+export type NewPlayerInteractionState = Insertable<PlayerInteractionStatesTable>;
+export type PlayerInteractionStateUpdate = Updateable<PlayerInteractionStatesTable>;
