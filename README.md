@@ -15,8 +15,8 @@ A text-based, command-driven MMORPG built for Telegram with TypeScript, using gr
 
 ## Prerequisites
 
-- Node.js (v16+)
-- PostgreSQL
+- Node.js (v22+)
+- PostgreSQL (v17+)
 - Redis
 - Telegram Bot Token (from BotFather)
 
