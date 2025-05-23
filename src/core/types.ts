@@ -169,7 +169,7 @@ export type UserStateStep =
 export interface UserState {
   action: UserStateAction;
   step: UserStateStep;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   timestamp?: number;
   enemyId?: number;
   areaId?: number;

@@ -1,17 +1,19 @@
 import { db as defaultDb } from '../database/kysely.js';
 import { Quest, QuestObjective, CharacterQuest } from '../core/types.js';
+import { Kysely } from 'kysely';
+import { Database } from '../database/schema.js';
 
 /**
  * QuestService - Handles quest-related operations
  */
 export class QuestService {
-  private db: any;
+  private db: Kysely<Database>;
 
   /**
    * Create a new QuestService instance
    * @param dbInstance Optional database instance for dependency injection
    */
-  constructor(dbInstance: any = defaultDb) {
+  constructor(dbInstance: Kysely<Database> = defaultDb) {
     this.db = dbInstance;
   }
   /**
@@ -54,7 +56,7 @@ export class QuestService {
     
     // Get objectives for each quest
     const activeQuests = await Promise.all(
-      characterQuests.map(async (quest: any) => {
+      characterQuests.map(async (quest: CharacterQuest) => {
         const objectives = await this.getQuestObjectives(character.id, quest.questId);
         
         return {
@@ -102,14 +104,14 @@ export class QuestService {
       .where('character_id', '=', character.id)
       .execute();
     
-    const existingIds = existingQuestIds.map((q: any) => q.quest_id);
+    const existingIds = existingQuestIds.map((q) => q.quest_id);
     
     // Get quests that match level and area requirements
     const availableQuests = await this.db
       .selectFrom('quests')
       .selectAll()
       .where('level_requirement', '<=', character.level)
-      .where((eb: any) => 
+      .where((eb) => 
         eb.or([
           eb('area_id', '=', character.areaId),
           eb('area_id', 'is', null)
@@ -120,7 +122,7 @@ export class QuestService {
     
     // Filter quests that have unmet prerequisites
     const filteredQuests = await Promise.all(
-      availableQuests.map(async (quest: any) => {
+      availableQuests.map(async (quest) => {
         // Check quest prerequisites
         if (quest.prerequisite_quest_ids && quest.prerequisite_quest_ids.length > 0) {
           const completedPrereqs = await this.db
@@ -181,7 +183,7 @@ export class QuestService {
     
     // Get progress for each objective
     const objectivesWithProgress = await Promise.all(
-      objectives.map(async (objective: any) => {
+      objectives.map(async (objective) => {
         // Get progress from character_quest_objectives
         const progress = await this.db
           .selectFrom('character_quest_objectives')
@@ -375,7 +377,7 @@ export class QuestService {
         .where('character_quest_objectives.quest_id', '=', questId)
         .execute();
       
-      isQuestCompleted = allObjectives.every((obj: any) => obj.progress >= obj.target);
+      isQuestCompleted = allObjectives.every((obj) => obj.progress >= obj.target);
       
       // If all objectives are completed, mark quest as completed
       if (isQuestCompleted) {

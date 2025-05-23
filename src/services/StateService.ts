@@ -111,7 +111,7 @@ export class StateService {
    */
   async getState(playerId: number): Promise<{
     currentAction: string | null;
-    actionContext: any | null;
+    actionContext: Record<string, unknown> | null;
     expiresAt: number | null;
   }> {
     const state = await this.getUserState(playerId);
@@ -143,7 +143,7 @@ export class StateService {
    * @param context Action context data
    * @param ttlSeconds Optional TTL in seconds
    */
-  async setState(playerId: number, action: string, context: any, ttlSeconds?: number): Promise<void> {
+  async setState(playerId: number, action: string, context: Record<string, unknown>, ttlSeconds?: number): Promise<void> {
     await this.setUserState(
       playerId,
       {
