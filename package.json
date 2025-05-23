@@ -2,13 +2,14 @@
   "name": "tele-rpg",
   "version": "0.1.0",
   "description": "Telegram MMORPG - Codename: RiftChronicles",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
-    "migrate": "ts-node src/database/migrateToLatest.ts",
-    "seed": "ts-node src/database/seed.ts",
+    "dev": "ts-node --esm src/index.ts",
+    "migrate": "ts-node --esm src/database/migrateToLatest.ts",
+    "seed": "ts-node --esm src/database/seed.ts",
     "lint": "eslint . --ext .ts",
     "test": "jest"
   },
