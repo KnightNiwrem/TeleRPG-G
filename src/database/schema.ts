@@ -20,6 +20,7 @@ export interface CharactersTable {
   intelligence: number;
   dexterity: number;
   wisdom: number;
+  vitality: number;
   area_id: number;
   created_at: ColumnType<Date, Date | string, never>;
   updated_at: ColumnType<Date, Date | string, Date | string>;

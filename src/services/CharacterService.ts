@@ -55,6 +55,7 @@ export class CharacterService {
       intelligence: dbCharacter.intelligence,
       dexterity: dbCharacter.dexterity,
       wisdom: dbCharacter.wisdom,
+      vitality: dbCharacter.vitality,
       areaId: dbCharacter.area_id
     };
   }
@@ -79,11 +80,13 @@ export class CharacterService {
     let intelligence = 5;
     let dexterity = 5;
     let wisdom = 5;
+    let vitality = 5; // Base vitality for all classes
     
     switch (characterClass) {
       case ClassType.WARRIOR:
         strength = 8;
         dexterity = 6;
+        vitality = 7; // Warriors have higher vitality
         break;
       case ClassType.MAGE:
         intelligence = 8;
@@ -96,14 +99,15 @@ export class CharacterService {
       case ClassType.CLERIC:
         wisdom = 8;
         intelligence = 6;
+        vitality = 6; // Clerics have slightly higher vitality
         break;
     }
     
-    // Calculate HP and SP based on stats
-    const maxHp = 50 + (strength * 2);
-    const maxSp = 30 + (intelligence * 2);
+    // Calculate HP and SP based on stats according to the new formula
+    const maxHp = vitality * 10 + (1 * 5); // level * 5 (level starts at 1)
+    const maxSp = wisdom * 5 + (1 * 5); // level * 5 (level starts at 1)
     
-    // Create new character
+  // Create new character
     const newCharacter: NewCharacter = {
       user_id: userId,
       name,
@@ -119,7 +123,9 @@ export class CharacterService {
       intelligence,
       dexterity,
       wisdom,
-      area_id: 1, // Start in first area (town)
+      vitality,
+      area_id: 1, // Start in Greenhaven Outskirts
+    };
     };
     
     const [dbCharacter] = await db
@@ -252,6 +258,7 @@ export class CharacterService {
     let newIntelligence = character.intelligence;
     let newDexterity = character.dexterity;
     let newWisdom = character.wisdom;
+    let newVitality = character.vitality;
     
     if (leveledUp) {
       // Increase stats based on class
@@ -259,6 +266,7 @@ export class CharacterService {
         case ClassType.WARRIOR:
           newStrength += 2;
           newDexterity += 1;
+          newVitality += 1;
           break;
         case ClassType.MAGE:
           newIntelligence += 2;
@@ -271,12 +279,13 @@ export class CharacterService {
         case ClassType.CLERIC:
           newWisdom += 2;
           newIntelligence += 1;
+          newVitality += 1;
           break;
       }
       
-      // Update HP and SP based on new stats
-      newMaxHp = 50 + (newStrength * 2);
-      newMaxSp = 30 + (newIntelligence * 2);
+      // Update HP and SP based on new stats using the new formula
+      newMaxHp = newVitality * 10 + (newLevel * 5);
+      newMaxSp = newWisdom * 5 + (newLevel * 5);
     }
     
     // Update character in database
@@ -293,6 +302,7 @@ export class CharacterService {
         intelligence: newIntelligence,
         dexterity: newDexterity,
         wisdom: newWisdom,
+        vitality: newVitality,
       })
       .where('id', '=', characterId)
       .execute();
