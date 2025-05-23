@@ -1,4 +1,4 @@
-import { db } from '../database/kysely';
+import { db as defaultDb } from '../database/kysely';
 import { Area, Monster, Character } from '../core/types';
 import { CharacterService } from './CharacterService';
 
@@ -7,9 +7,11 @@ import { CharacterService } from './CharacterService';
  */
 export class AreaService {
   private characterService: CharacterService;
+  private db: any;
 
-  constructor() {
-    this.characterService = new CharacterService();
+  constructor(dbInstance: any = defaultDb, characterService?: CharacterService) {
+    this.db = dbInstance;
+    this.characterService = characterService || new CharacterService(this.db);
   }
 
   /**
@@ -17,7 +19,7 @@ export class AreaService {
    * @returns Array of all areas
    */
   async getAllAreas(): Promise<Area[]> {
-    const dbAreas = await db
+    const dbAreas = await this.db
       .selectFrom('areas')
       .selectAll()
       .execute();
@@ -39,7 +41,7 @@ export class AreaService {
    * @returns Area object or null if not found
    */
   async getArea(areaId: number): Promise<Area | null> {
-    const dbArea = await db
+    const dbArea = await this.db
       .selectFrom('areas')
       .selectAll()
       .where('id', '=', areaId)
@@ -67,7 +69,7 @@ export class AreaService {
    */
   async getAvailableAreas(userId: number): Promise<Area[]> {
     // Get character data to check level
-    const character = await db
+    const character = await this.db
       .selectFrom('characters')
       .select(['id', 'level'])
       .where('user_id', '=', userId)
@@ -78,7 +80,7 @@ export class AreaService {
     }
     
     // Get areas that match the character's level
-    const dbAreas = await db
+    const dbAreas = await this.db
       .selectFrom('areas')
       .selectAll()
       .where('level_requirement', '<=', character.level)
@@ -110,7 +112,7 @@ export class AreaService {
     }
     
     // Update character's area
-    const result = await db
+    const result = await this.db
       .updateTable('characters')
       .set({ area_id: areaId })
       .where('user_id', '=', userId)
@@ -126,7 +128,7 @@ export class AreaService {
    */
   async getConnectedAreas(areaId: number): Promise<Area[]> {
     // Get areas that have this area as parent
-    const childAreas = await db
+    const childAreas = await this.db
       .selectFrom('areas')
       .selectAll()
       .where('parent_area_id', '=', areaId)
@@ -170,7 +172,7 @@ export class AreaService {
     }
     
     // Get monsters in the area
-    const dbMonsters = await db
+    const dbMonsters = await this.db
       .selectFrom('monsters')
       .selectAll()
       .where('area_id', '=', character.areaId)
@@ -222,21 +224,21 @@ export class AreaService {
     const exits = connectedAreas.map(connectedArea => connectedArea.name);
     
     // Get NPCs in the area
-    const npcs = await db
+    const npcs = await this.db
       .selectFrom('npcs')
       .select('name')
       .where('area_id', '=', area.id)
       .execute();
     
     // Get monsters in the area
-    const monsters = await db
+    const monsters = await this.db
       .selectFrom('monsters')
       .select('name')
       .where('area_id', '=', area.id)
       .execute();
     
     // Get other players in the area
-    const otherPlayers = await db
+    const otherPlayers = await this.db
       .selectFrom('characters')
       .select('name')
       .where('area_id', '=', area.id)

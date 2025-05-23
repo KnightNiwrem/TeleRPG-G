@@ -1,4 +1,4 @@
-import { db } from '../database/kysely';
+import { db as defaultDb } from '../database/kysely';
 import { ClassType, EntityType } from '../core/enums';
 import { Character } from '../core/types';
 import { NewCharacter } from '../database/schema';
@@ -7,13 +7,22 @@ import { NewCharacter } from '../database/schema';
  * CharacterService - Handles character-related operations
  */
 export class CharacterService {
+  private db: any;
+
+  /**
+   * Create a new CharacterService instance
+   * @param dbInstance Optional database instance for dependency injection
+   */
+  constructor(dbInstance: any = defaultDb) {
+    this.db = dbInstance;
+  }
   /**
    * Check if a user already has a character
    * @param userId Telegram user ID
    * @returns Boolean indicating if the user has a character
    */
   async hasCharacter(userId: number): Promise<boolean> {
-    const character = await db
+    const character = await this.db
       .selectFrom('characters')
       .select('id')
       .where('user_id', '=', userId)
@@ -28,7 +37,7 @@ export class CharacterService {
    * @returns Character object or null if not found
    */
   async getCharacter(userId: number): Promise<Character | null> {
-    const dbCharacter = await db
+    const dbCharacter = await this.db
       .selectFrom('characters')
       .selectAll()
       .where('user_id', '=', userId)
@@ -128,7 +137,7 @@ export class CharacterService {
     };
     };
     
-    const [dbCharacter] = await db
+    const [dbCharacter] = await this.db
       .insertInto('characters')
       .values(newCharacter)
       .returning('id')
@@ -151,7 +160,7 @@ export class CharacterService {
    */
   private async addStartingSkills(characterId: number, characterClass: ClassType): Promise<void> {
     // Get basic skill for the character's class
-    const skill = await db
+    const skill = await this.db
       .selectFrom('skills')
       .select('id')
       .where('class_restriction', '=', characterClass)
@@ -161,7 +170,7 @@ export class CharacterService {
     
     if (skill) {
       // Add skill to character
-      await db
+      await this.db
         .insertInto('character_skills')
         .values({
           character_id: characterId,
@@ -186,7 +195,7 @@ export class CharacterService {
     }
     
     // Add weapon to inventory
-    await db
+    await this.db
       .insertInto('inventory_items')
       .values({
         character_id: characterId,
@@ -197,7 +206,7 @@ export class CharacterService {
       .execute();
     
     // Add basic armor
-    await db
+    await this.db
       .insertInto('inventory_items')
       .values({
         character_id: characterId,
@@ -208,7 +217,7 @@ export class CharacterService {
       .execute();
     
     // Add a health potion
-    await db
+    await this.db
       .insertInto('inventory_items')
       .values({
         character_id: characterId,
@@ -227,7 +236,7 @@ export class CharacterService {
    */
   async addExperience(characterId: number, expGain: number): Promise<Character> {
     // Get current character data
-    const character = await db
+    const character = await this.db
       .selectFrom('characters')
       .selectAll()
       .where('id', '=', characterId)
@@ -289,7 +298,7 @@ export class CharacterService {
     }
     
     // Update character in database
-    await db
+    await this.db
       .updateTable('characters')
       .set({
         level: newLevel,
