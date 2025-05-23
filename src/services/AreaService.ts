@@ -1,15 +1,17 @@
 import { db as defaultDb } from '../database/kysely.js';
-import { Area, Monster, Character } from '../core/types.js';
+import { Area, Monster } from '../core/types.js';
 import { CharacterService } from './CharacterService.js';
+import { Kysely } from 'kysely';
+import { Database } from '../database/schema.js';
 
 /**
  * AreaService - Handles area-related operations
  */
 export class AreaService {
   private characterService: CharacterService;
-  private db: any;
+  private db: Kysely<Database>;
 
-  constructor(dbInstance: any = defaultDb, characterService?: CharacterService) {
+  constructor(dbInstance: Kysely<Database> = defaultDb, characterService?: CharacterService) {
     this.db = dbInstance;
     this.characterService = characterService || new CharacterService(this.db);
   }

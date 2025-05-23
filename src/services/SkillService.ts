@@ -98,7 +98,7 @@ export class SkillService {
       .execute();
     
     // Map to Skill interface
-    return availableSkills.map(skill => ({
+    return availableSkills.map((skill) => ({
       id: skill.id,
       name: skill.name,
       description: skill.description,

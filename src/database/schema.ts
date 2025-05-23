@@ -245,7 +245,7 @@ export type CharacterQuestObjective = Selectable<CharacterQuestObjectivesTable>;
 export interface PlayerInteractionStatesTable {
   player_id: number;
   current_action: string;
-  action_context: ColumnType<Record<string, any>, string | Record<string, any>, string | Record<string, any>>;
+  action_context: ColumnType<Record<string, unknown>, string | Record<string, unknown>, string | Record<string, unknown>>;
   expires_at: ColumnType<Date, Date | string | null, Date | string | null>;
   created_at: ColumnType<Date, Date | string, never>;
   updated_at: ColumnType<Date, Date | string, Date | string>;
