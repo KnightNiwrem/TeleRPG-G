@@ -1,10 +1,19 @@
-import { db } from '../database/kysely';
+import { db as defaultDb } from '../database/kysely';
 import { Quest, QuestObjective, CharacterQuest } from '../core/types';
 
 /**
  * QuestService - Handles quest-related operations
  */
 export class QuestService {
+  private db: any;
+
+  /**
+   * Create a new QuestService instance
+   * @param dbInstance Optional database instance for dependency injection
+   */
+  constructor(dbInstance: any = defaultDb) {
+    this.db = dbInstance;
+  }
   /**
    * Get all active quests for a character
    * @param userId Telegram user ID
@@ -12,7 +21,7 @@ export class QuestService {
    */
   async getActiveQuests(userId: number): Promise<CharacterQuest[]> {
     // Get character ID
-    const character = await db
+    const character = await this.db
       .selectFrom('characters')
       .select('id')
       .where('user_id', '=', userId)
@@ -23,7 +32,7 @@ export class QuestService {
     }
     
     // Get active quests
-    const characterQuests = await db
+    const characterQuests = await this.db
       .selectFrom('character_quests')
       .innerJoin('quests', 'quests.id', 'character_quests.quest_id')
       .select([
@@ -45,7 +54,7 @@ export class QuestService {
     
     // Get objectives for each quest
     const activeQuests = await Promise.all(
-      characterQuests.map(async (quest) => {
+      characterQuests.map(async (quest: any) => {
         const objectives = await this.getQuestObjectives(character.id, quest.questId);
         
         return {
@@ -76,7 +85,7 @@ export class QuestService {
    */
   async getAvailableQuests(userId: number): Promise<Quest[]> {
     // Get character details
-    const character = await db
+    const character = await this.db
       .selectFrom('characters')
       .select(['id', 'level', 'area_id as areaId'])
       .where('user_id', '=', userId)
@@ -87,20 +96,20 @@ export class QuestService {
     }
     
     // Get quests already accepted or completed
-    const existingQuestIds = await db
+    const existingQuestIds = await this.db
       .selectFrom('character_quests')
       .select('quest_id')
       .where('character_id', '=', character.id)
       .execute();
     
-    const existingIds = existingQuestIds.map(q => q.quest_id);
+    const existingIds = existingQuestIds.map((q: any) => q.quest_id);
     
     // Get quests that match level and area requirements
-    const availableQuests = await db
+    const availableQuests = await this.db
       .selectFrom('quests')
       .selectAll()
       .where('level_requirement', '<=', character.level)
-      .where(eb => 
+      .where((eb: any) => 
         eb.or([
           eb('area_id', '=', character.areaId),
           eb('area_id', 'is', null)
@@ -111,10 +120,10 @@ export class QuestService {
     
     // Filter quests that have unmet prerequisites
     const filteredQuests = await Promise.all(
-      availableQuests.map(async (quest) => {
+      availableQuests.map(async (quest: any) => {
         // Check quest prerequisites
         if (quest.prerequisite_quest_ids && quest.prerequisite_quest_ids.length > 0) {
-          const completedPrereqs = await db
+          const completedPrereqs = await this.db
             .selectFrom('character_quests')
             .select('quest_id')
             .where('character_id', '=', character.id)
@@ -157,7 +166,7 @@ export class QuestService {
    */
   private async getQuestObjectives(characterId: number, questId: number): Promise<QuestObjective[]> {
     // Get quest objectives
-    const objectives = await db
+    const objectives = await this.db
       .selectFrom('quest_objectives')
       .select([
         'id',
@@ -172,9 +181,9 @@ export class QuestService {
     
     // Get progress for each objective
     const objectivesWithProgress = await Promise.all(
-      objectives.map(async (objective) => {
+      objectives.map(async (objective: any) => {
         // Get progress from character_quest_objectives
-        const progress = await db
+        const progress = await this.db
           .selectFrom('character_quest_objectives')
           .select('progress')
           .where('character_id', '=', characterId)
@@ -200,7 +209,7 @@ export class QuestService {
    */
   async acceptQuest(userId: number, questId: number): Promise<boolean> {
     // Get character ID
-    const character = await db
+    const character = await this.db
       .selectFrom('characters')
       .select('id')
       .where('user_id', '=', userId)
@@ -211,7 +220,7 @@ export class QuestService {
     }
     
     // Check if quest exists and is not already accepted
-    const existingQuest = await db
+    const existingQuest = await this.db
       .selectFrom('character_quests')
       .select('quest_id')
       .where('character_id', '=', character.id)
@@ -223,7 +232,7 @@ export class QuestService {
     }
     
     // Get quest details to verify requirements
-    const quest = await db
+    const quest = await this.db
       .selectFrom('quests')
       .selectAll()
       .where('id', '=', questId)
@@ -234,7 +243,7 @@ export class QuestService {
     }
     
     // Check level requirement
-    const characterLevel = await db
+    const characterLevel = await this.db
       .selectFrom('characters')
       .select('level')
       .where('id', '=', character.id)
@@ -246,7 +255,7 @@ export class QuestService {
     
     // Check prerequisites
     if (quest.prerequisite_quest_ids && quest.prerequisite_quest_ids.length > 0) {
-      const completedPrereqs = await db
+      const completedPrereqs = await this.db
         .selectFrom('character_quests')
         .select('quest_id')
         .where('character_id', '=', character.id)
@@ -260,7 +269,7 @@ export class QuestService {
     }
     
     // Accept the quest
-    await db
+    await this.db
       .insertInto('character_quests')
       .values({
         character_id: character.id,
@@ -273,14 +282,14 @@ export class QuestService {
       .execute();
     
     // Initialize objectives
-    const objectives = await db
+    const objectives = await this.db
       .selectFrom('quest_objectives')
       .select('id')
       .where('quest_id', '=', questId)
       .execute();
     
     for (const objective of objectives) {
-      await db
+      await this.db
         .insertInto('character_quest_objectives')
         .values({
           character_id: character.id,
@@ -309,7 +318,7 @@ export class QuestService {
     progressAmount: number = 1
   ): Promise<{ currentProgress: number; isCompleted: boolean }> {
     // Get character ID
-    const character = await db
+    const character = await this.db
       .selectFrom('characters')
       .select('id')
       .where('user_id', '=', userId)
@@ -320,7 +329,7 @@ export class QuestService {
     }
     
     // Get current progress
-    const currentObjective = await db
+    const currentObjective = await this.db
       .selectFrom('character_quest_objectives')
       .innerJoin('quest_objectives', 'quest_objectives.id', 'character_quest_objectives.objective_id')
       .select([
@@ -340,7 +349,7 @@ export class QuestService {
     const newProgress = Math.min(currentObjective.progress + progressAmount, currentObjective.target);
     
     // Update progress
-    await db
+    await this.db
       .updateTable('character_quest_objectives')
       .set({ progress: newProgress })
       .where('character_id', '=', character.id)
@@ -355,7 +364,7 @@ export class QuestService {
     let isQuestCompleted = false;
     
     if (isObjectiveCompleted) {
-      const allObjectives = await db
+      const allObjectives = await this.db
         .selectFrom('character_quest_objectives')
         .innerJoin('quest_objectives', 'quest_objectives.id', 'character_quest_objectives.objective_id')
         .select([
@@ -366,11 +375,11 @@ export class QuestService {
         .where('character_quest_objectives.quest_id', '=', questId)
         .execute();
       
-      isQuestCompleted = allObjectives.every(obj => obj.progress >= obj.target);
+      isQuestCompleted = allObjectives.every((obj: any) => obj.progress >= obj.target);
       
       // If all objectives are completed, mark quest as completed
       if (isQuestCompleted) {
-        await db
+        await this.db
           .updateTable('character_quests')
           .set({
             active: false,
@@ -399,7 +408,7 @@ export class QuestService {
    */
   private async awardQuestRewards(characterId: number, questId: number): Promise<void> {
     // Get quest rewards
-    const quest = await db
+    const quest = await this.db
       .selectFrom('quests')
       .select([
         'exp_reward as expReward',
@@ -414,7 +423,7 @@ export class QuestService {
     }
     
     // Get character current stats
-    const character = await db
+    const character = await this.db
       .selectFrom('characters')
       .select(['experience', 'level'])
       .where('id', '=', characterId)
@@ -439,7 +448,7 @@ export class QuestService {
       }
       
       // Update character
-      await db
+      await this.db
         .updateTable('characters')
         .set({
           experience: newExp,
@@ -453,7 +462,7 @@ export class QuestService {
     if (quest.itemRewards && quest.itemRewards.length > 0) {
       for (const itemId of quest.itemRewards) {
         // Check if item already exists in inventory
-        const existingItem = await db
+        const existingItem = await this.db
           .selectFrom('inventory_items')
           .select('quantity')
           .where('character_id', '=', characterId)
@@ -462,7 +471,7 @@ export class QuestService {
         
         if (existingItem) {
           // Increase quantity
-          await db
+          await this.db
             .updateTable('inventory_items')
             .set({ quantity: existingItem.quantity + 1 })
             .where('character_id', '=', characterId)
@@ -470,7 +479,7 @@ export class QuestService {
             .execute();
         } else {
           // Add new item
-          await db
+          await this.db
             .insertInto('inventory_items')
             .values({
               character_id: characterId,

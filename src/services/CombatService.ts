@@ -1,4 +1,4 @@
-import { db } from '../database/kysely';
+import { db as defaultDb } from '../database/kysely';
 import { Monster, Character } from '../core/types';
 import { CharacterService } from './CharacterService';
 import { AreaService } from './AreaService';
@@ -22,17 +22,24 @@ export class CombatService {
   private readonly expiry = 1800; // 30 minutes in seconds
   private characterService: CharacterService;
   private areaService: AreaService;
+  private db: any;
 
-  constructor() {
-    // Initialize Redis connection
-    this.redis = new Redis({
+  constructor(
+    dbInstance: any = defaultDb,
+    redisInstance?: Redis,
+    characterService?: CharacterService,
+    areaService?: AreaService
+  ) {
+    // Initialize Redis connection if not provided
+    this.redis = redisInstance || new Redis({
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6379'),
       password: process.env.REDIS_PASSWORD || '',
     });
 
-    this.characterService = new CharacterService();
-    this.areaService = new AreaService();
+    this.db = dbInstance;
+    this.characterService = characterService || new CharacterService(this.db);
+    this.areaService = areaService || new AreaService(this.db);
   }
 
   /**
@@ -81,7 +88,7 @@ export class CombatService {
     }
     
     // Find monsters in the current area
-    const dbMonsters = await db
+    const dbMonsters = await this.db
       .selectFrom('monsters')
       .selectAll()
       .where('area_id', '=', character.areaId)
@@ -126,11 +133,11 @@ export class CombatService {
     }
     
     // Find monsters in the current area with matching name (case insensitive)
-    const dbMonsters = await db
+    const dbMonsters = await this.db
       .selectFrom('monsters')
       .selectAll()
       .where('area_id', '=', character.areaId)
-      .where(db.raw('LOWER(name)'), 'like', `%${targetName.toLowerCase()}%`)
+      .where((eb: any) => eb('name', 'like', `%${targetName}%`))
       .execute();
     
     if (dbMonsters.length === 0) {
@@ -229,7 +236,7 @@ export class CombatService {
       throw new Error('Character not found');
     }
     
-    const dbMonster = await db
+    const dbMonster = await this.db
       .selectFrom('monsters')
       .selectAll()
       .where('id', '=', monsterId)
@@ -302,7 +309,8 @@ export class CombatService {
     if (enemy.currentHp <= 0) {
       // End combat and award experience
       await this.endCombat(userId);
-      await this.characterService.addExperience(combatState.character.id, enemy.expReward);
+      // Add experience using safe method
+      await this.characterService.handleBattleRewards(combatState.character.id, enemy.expReward);
       
       return {
         state: { ...combatState, enemy },
@@ -356,7 +364,7 @@ export class CombatService {
     if (character.currentHp <= 0) {
       // End combat and reset character HP
       await this.endCombat(userId);
-      await db
+      await this.db
         .updateTable('characters')
         .set({ current_hp: Math.floor(character.maxHp * 0.5) }) // Restore to 50% HP after defeat
         .where('id', '=', character.id)
