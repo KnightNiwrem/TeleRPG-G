@@ -435,6 +435,8 @@ async function seedItems() {
       stat_bonus: { strength: 1 },
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Wooden Staff',
@@ -446,6 +448,8 @@ async function seedItems() {
       stat_bonus: { intelligence: 1 },
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Leather Armor',
@@ -457,6 +461,8 @@ async function seedItems() {
       stat_bonus: { max_hp: 5 },
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     
     // Consumables
@@ -470,6 +476,8 @@ async function seedItems() {
       stat_bonus: null,
       usable: true,
       use_effect: 'Restores 20 HP',
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Mana Potion',
@@ -481,6 +489,8 @@ async function seedItems() {
       stat_bonus: null,
       usable: true,
       use_effect: 'Restores 20 SP',
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     
     // Materials
@@ -494,6 +504,8 @@ async function seedItems() {
       stat_bonus: null,
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       name: 'Spider Silk',
@@ -505,6 +517,8 @@ async function seedItems() {
       stat_bonus: null,
       usable: false,
       use_effect: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 
@@ -535,6 +549,8 @@ async function seedQuests() {
       area_id: 1, // Aetherton
       npc_id: 1, // Elder Thorne
       prerequisite_quest_ids: null,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).returning('id').execute();
 
@@ -546,6 +562,8 @@ async function seedQuests() {
       type: ObjectiveType.EXPLORE,
       target_id: 2, // Whispering Woods area
       target: 1,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 
@@ -561,6 +579,8 @@ async function seedQuests() {
       area_id: 2, // Whispering Woods
       npc_id: 3, // Ranger Elwin
       prerequisite_quest_ids: [firstQuest.id],
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).returning('id').execute();
 
@@ -572,6 +592,8 @@ async function seedQuests() {
       type: ObjectiveType.KILL,
       target_id: 1, // Forest Wolf monster
       target: 3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
     {
       quest_id: secondQuest.id,
@@ -579,6 +601,8 @@ async function seedQuests() {
       type: ObjectiveType.COLLECT,
       target_id: 6, // Wolf Pelt item
       target: 3,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]).execute();
 

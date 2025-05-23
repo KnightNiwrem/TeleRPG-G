@@ -279,7 +279,9 @@ export class QuestService {
         active: true,
         completed: false,
         started_at: new Date(),
-        completed_at: null
+        completed_at: null,
+        created_at: new Date(),
+        updated_at: new Date()
       })
       .execute();
     
@@ -297,7 +299,9 @@ export class QuestService {
           character_id: character.id,
           quest_id: questId,
           objective_id: objective.id,
-          progress: 0
+          progress: 0,
+          created_at: new Date(),
+          updated_at: new Date()
         })
         .execute();
     }
@@ -487,7 +491,9 @@ export class QuestService {
               character_id: characterId,
               item_id: itemId,
               quantity: 1,
-              equipped: false
+              equipped: false,
+              created_at: new Date(),
+              updated_at: new Date()
             })
             .execute();
         }
