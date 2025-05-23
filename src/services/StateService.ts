@@ -1,5 +1,5 @@
 import Redis from 'ioredis';
-import { UserState } from '../core/types';
+import { UserState, UserStateAction } from '../core/types';
 
 /**
  * StateService - Handles user state management without using grammyjs sessions
@@ -111,6 +111,7 @@ export class StateService {
   async getState(playerId: number): Promise<{
     currentAction: string | null;
     actionContext: any | null;
+    expiresAt: number | null;
   }> {
     const state = await this.getUserState(playerId);
     
@@ -118,12 +119,19 @@ export class StateService {
       return {
         currentAction: null,
         actionContext: null,
+        expiresAt: null,
       };
     }
+    
+    // Get TTL for the key
+    const key = this.getUserKey(playerId);
+    const ttl = await this.redis.ttl(key);
+    const expiresAt = ttl > 0 ? Date.now() + (ttl * 1000) : null;
     
     return {
       currentAction: state.action,
       actionContext: state.data || {},
+      expiresAt,
     };
   }
 
