@@ -1,5 +1,5 @@
 import { Queue, Worker } from 'bullmq';
-import Redis from 'ioredis';
+import * as Redis from 'ioredis';
 import { db } from '../database/kysely.js';
 import { env } from '../config/env.js';
 
@@ -14,13 +14,13 @@ const redisConnection = {
 const queueName = env.QUEUE_NAME;
 
 // Create Redis client with proper typing
-const redisClient = new Redis(
+const redisClient = new Redis.default(
   env.REDIS_HOST,
   env.REDIS_PORT,
   {
     password: env.REDIS_PASSWORD,
   }
-) as InstanceType<typeof Redis>;
+);
 
 // Initialize BullMQ queue
 const queue = new Queue(queueName, { connection: redisClient });

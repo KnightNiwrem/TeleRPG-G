@@ -2,7 +2,7 @@ import { db as defaultDb } from '../database/kysely.js';
 import { Monster, Character } from '../core/types.js';
 import { CharacterService } from './CharacterService.js';
 import { AreaService } from './AreaService.js';
-import Redis from 'ioredis';
+import * as Redis from 'ioredis';
 import { InlineKeyboard } from 'grammy';
 
 // Interface for combat state
@@ -17,7 +17,7 @@ interface CombatState {
  * CombatService - Handles combat-related operations
  */
 export class CombatService {
-  private redis: InstanceType<typeof Redis>;
+  private redis: Redis.Redis;
   private readonly prefix = 'combat_state:';
   private readonly expiry = 1800; // 30 minutes in seconds
   private characterService: CharacterService;
@@ -26,12 +26,12 @@ export class CombatService {
 
   constructor(
     dbInstance: typeof defaultDb = defaultDb,
-    redisInstance?: InstanceType<typeof Redis>,
+    redisInstance?: Redis.Redis,
     characterService?: CharacterService,
     areaService?: AreaService
   ) {
     // Initialize Redis connection if not provided
-    this.redis = redisInstance || new Redis(
+    this.redis = redisInstance || new Redis.default(
       process.env.REDIS_HOST || 'localhost',
       parseInt(process.env.REDIS_PORT || '6379'),
       {
