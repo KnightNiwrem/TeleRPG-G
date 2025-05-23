@@ -49,6 +49,7 @@ A text-based, command-driven MMORPG built for Telegram with TypeScript, using gr
    DB_USER=postgres
    DB_PASSWORD=postgres
    DB_NAME=telerpg
+   DB_SSL=false
 
    # Redis Configuration
    REDIS_HOST=localhost
