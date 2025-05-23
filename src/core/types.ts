@@ -128,6 +128,14 @@ export interface CharacterQuest {
   startedAt: Date;
   completedAt: Date | null;
   objectives: QuestObjective[];
+  // Properties from Quest that are included in the QuestService response
+  name: string;
+  description: string;
+  type: QuestType;
+  expReward: number;
+  goldReward: number;
+  itemRewards: number[] | null;
+  id?: number; // Added for quest_details reference
 }
 
 // User state types for state management without sessions

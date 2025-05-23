@@ -229,7 +229,7 @@ export class InventoryService {
    * @param itemId Item ID
    * @returns Object with success status and message
    */
-  async useItem(userId: number, itemId: number): Promise<{ success: boolean; message: string }> {
+  async useItemById(userId: number, itemId: number): Promise<{ success: boolean; message: string }> {
     // Get character
     const character = await db
       .selectFrom('characters')
