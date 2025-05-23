@@ -17,7 +17,7 @@ interface CombatState {
  * CombatService - Handles combat-related operations
  */
 export class CombatService {
-  private redis: Redis;
+  private redis: InstanceType<typeof Redis>;
   private readonly prefix = 'combat_state:';
   private readonly expiry = 1800; // 30 minutes in seconds
   private characterService: CharacterService;
@@ -26,7 +26,7 @@ export class CombatService {
 
   constructor(
     dbInstance: typeof defaultDb = defaultDb,
-    redisInstance?: Redis,
+    redisInstance?: InstanceType<typeof Redis>,
     characterService?: CharacterService,
     areaService?: AreaService
   ) {

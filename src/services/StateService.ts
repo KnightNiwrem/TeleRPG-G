@@ -7,7 +7,7 @@ import { env } from '../config/env.js';
  * Uses Redis to store user state information
  */
 export class StateService {
-  private redis: Redis;
+  private redis: InstanceType<typeof Redis>;
   private readonly prefix = 'user_state:';
   private readonly expiry = 3600; // 1 hour in seconds
 

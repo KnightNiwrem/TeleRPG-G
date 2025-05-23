@@ -2,19 +2,24 @@ import 'dotenv/config';
 import './config/env'; // Import and validate environment variables
 import { bot } from './bot.js';
 import { db } from './database/kysely.js';
-import { sql } from 'kysely';
 
 // Check database version and connection
 async function checkDatabaseConnection() {
   try {
-    // Using raw SQL to check database connection
-    const query = sql`SELECT version() as version`;
-    const result = await db.selectFrom(sql`information_schema.tables`)
-      .select([query.as('version')])
-      .limit(1)
-      .execute();
+    // Simply use a direct query without typing complexities
+    const { Pool } = await import('pg');
+    const pool = new Pool({
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT || '5432'),
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME
+    });
     
-    console.log(`Connected to PostgreSQL: ${result[0]?.version || 'Unknown version'}`);
+    const result = await pool.query('SELECT version()');
+    console.log(`Connected to PostgreSQL: ${result.rows[0]?.version || 'Unknown version'}`);
+    
+    await pool.end();
     return true;
   } catch (error) {
     console.error('Database connection error:', error);
