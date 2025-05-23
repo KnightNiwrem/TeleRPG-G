@@ -153,8 +153,8 @@ export class AreaService {
       name: area.name,
       description: area.description,
       type: area.type,
-      levelRequirement: area.level_requirement,
-      parentAreaId: area.parent_area_id
+      levelRequirement: 'level_requirement' in area ? area.level_requirement : area.levelRequirement,
+      parentAreaId: 'parent_area_id' in area ? area.parent_area_id : area.parentAreaId
     }));
     
     return connectedAreas;

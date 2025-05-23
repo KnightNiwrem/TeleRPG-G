@@ -2,13 +2,14 @@ import 'dotenv/config';
 import './config/env'; // Import and validate environment variables
 import { bot } from './bot.js';
 import { db } from './database/kysely.js';
+import { sql } from 'kysely';
 
 // Check database version and connection
 async function checkDatabaseConnection() {
   try {
     const result = await db.executeQuery(
       db.selectFrom('information_schema.tables')
-        .select(db.raw('version() as version'))
+        .select(sql`version() as version`)
         .limit(1)
         .compile()
     );
