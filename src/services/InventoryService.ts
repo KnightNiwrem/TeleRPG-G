@@ -407,7 +407,7 @@ export class InventoryService {
         'items.name'
       ])
       .where('inventory_items.character_id', '=', character.id)
-      .where('items.equipment_slot', '=', slotName)
+      .where('items.equipment_slot', '=', slotName as any)
       .where('inventory_items.equipped', '=', true)
       .executeTakeFirst();
     
