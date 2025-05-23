@@ -7,8 +7,8 @@ import { AreaService } from '../../services/AreaService.js';
 import { EntityType, ClassType } from '../../core/enums.js';
 
 // Mock the CharacterService and AreaService
-jest.mock('../../services/CharacterService');
-jest.mock('../../services/AreaService');
+jest.mock('../../services/CharacterService.js');
+jest.mock('../../services/AreaService.js');
 
 describe('CombatService', () => {
   let combatService: CombatService;
