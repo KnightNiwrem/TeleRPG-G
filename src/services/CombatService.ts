@@ -137,7 +137,7 @@ export class CombatService {
       .selectFrom('monsters')
       .selectAll()
       .where('area_id', '=', character.areaId)
-      .where(db.raw('LOWER(name)'), 'like', `%${targetName.toLowerCase()}%`)
+      .where((eb: any) => eb('name', 'like', `%${targetName}%`))
       .execute();
     
     if (dbMonsters.length === 0) {

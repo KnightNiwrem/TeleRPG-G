@@ -54,7 +54,7 @@ export class QuestService {
     
     // Get objectives for each quest
     const activeQuests = await Promise.all(
-      characterQuests.map(async (quest) => {
+      characterQuests.map(async (quest: any) => {
         const objectives = await this.getQuestObjectives(character.id, quest.questId);
         
         return {
@@ -102,14 +102,14 @@ export class QuestService {
       .where('character_id', '=', character.id)
       .execute();
     
-    const existingIds = existingQuestIds.map(q => q.quest_id);
+    const existingIds = existingQuestIds.map((q: any) => q.quest_id);
     
     // Get quests that match level and area requirements
     const availableQuests = await this.db
       .selectFrom('quests')
       .selectAll()
       .where('level_requirement', '<=', character.level)
-      .where(eb => 
+      .where((eb: any) => 
         eb.or([
           eb('area_id', '=', character.areaId),
           eb('area_id', 'is', null)
@@ -120,7 +120,7 @@ export class QuestService {
     
     // Filter quests that have unmet prerequisites
     const filteredQuests = await Promise.all(
-      availableQuests.map(async (quest) => {
+      availableQuests.map(async (quest: any) => {
         // Check quest prerequisites
         if (quest.prerequisite_quest_ids && quest.prerequisite_quest_ids.length > 0) {
           const completedPrereqs = await this.db
@@ -181,7 +181,7 @@ export class QuestService {
     
     // Get progress for each objective
     const objectivesWithProgress = await Promise.all(
-      objectives.map(async (objective) => {
+      objectives.map(async (objective: any) => {
         // Get progress from character_quest_objectives
         const progress = await this.db
           .selectFrom('character_quest_objectives')
@@ -375,7 +375,7 @@ export class QuestService {
         .where('character_quest_objectives.quest_id', '=', questId)
         .execute();
       
-      isQuestCompleted = allObjectives.every(obj => obj.progress >= obj.target);
+      isQuestCompleted = allObjectives.every((obj: any) => obj.progress >= obj.target);
       
       // If all objectives are completed, mark quest as completed
       if (isQuestCompleted) {
