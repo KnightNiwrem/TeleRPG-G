@@ -1,4 +1,4 @@
-import { Bot } from 'grammy';
+import type { Composer, Context } from 'grammy';
 import { startHandler } from './startHandler.js';
 import { exploreHandler } from './exploreHandler.js';
 import { combatHandler } from './combatHandler.js';
@@ -13,26 +13,23 @@ import { unequipHandler } from './unequipHandler.js';
 import { useHandler } from './useHandler.js';
 import { dropHandler } from './dropHandler.js';
 
-export function registerCommandHandlers(bot: Bot) {
+export function registerCommandHandlers<C extends Context>(composer: Composer<C>) {
   // Register command handlers
-  bot.command('start', startHandler);
-  bot.command('explore', exploreHandler);
-  bot.command('combat', combatHandler);
-  bot.command('skill', skillHandler);
-  bot.command('inventory', inventoryHandler);
-  bot.command('quest', questHandler);
-  bot.command('attack', attackHandler);
-  bot.command('go', goHandler);
-  bot.command('equip', equipHandler);
-  bot.command('unequip', unequipHandler);
-  bot.command('use', useHandler);
-  bot.command('drop', dropHandler);
-
-  // Register message handler for text messages (handles multi-step interactions)
-  bot.on('message:text', messageHandler);
+  composer.command('start', startHandler);
+  composer.command('explore', exploreHandler);
+  composer.command('combat', combatHandler);
+  composer.command('skill', skillHandler);
+  composer.command('inventory', inventoryHandler);
+  composer.command('quest', questHandler);
+  composer.command('attack', attackHandler);
+  composer.command('go', goHandler);
+  composer.command('equip', equipHandler);
+  composer.command('unequip', unequipHandler);
+  composer.command('use', useHandler);
+  composer.command('drop', dropHandler);
 
   // Register help command
-  bot.command('help', async (ctx) => {
+  composer.command('help', async (ctx) => {
     await ctx.reply(
       'Welcome to RiftChronicles! Available commands:\n' +
       '/start - Create a character or view your character\n' +
@@ -50,4 +47,7 @@ export function registerCommandHandlers(bot: Bot) {
       '/help - Show this help message'
     );
   });
+
+  // Register message handler for text messages (handles multi-step interactions)
+  composer.on('message:text', messageHandler);
 }
