@@ -56,21 +56,25 @@ export async function attackHandler(ctx: Context) {
     }
     
     // Combat initiated successfully
-    await ctx.reply(
-      `You engage ${result.enemy.name}!\n` +
-      `Enemy HP: ${result.enemy.currentHp}/${result.enemy.maxHp}\n` +
-      `Your HP: ${result.character.currentHp}/${result.character.maxHp}\n` +
-      `Your SP: ${result.character.currentSp}/${result.character.maxSp}\n\n` +
-      'What will you do?',
-      { reply_markup: result.keyboard }
-    );
-    
-    // Set state to in combat
-    await stateService.updateUserState(userId, {
-      action: 'in_combat',
-      step: 'turn_start',
-      enemyId: result.enemy.id,
-    });
+    if (result.enemy && result.character) {
+      await ctx.reply(
+        `You engage ${result.enemy.name}!\n` +
+        `Enemy HP: ${result.enemy.currentHp}/${result.enemy.maxHp}\n` +
+        `Your HP: ${result.character.currentHp}/${result.character.maxHp}\n` +
+        `Your SP: ${result.character.currentSp}/${result.character.maxSp}\n\n` +
+        'What will you do?',
+        { reply_markup: result.keyboard }
+      );
+      
+      // Set state to in combat
+      await stateService.updateUserState(userId, {
+        action: 'in_combat',
+        step: 'turn_start',
+        enemyId: result.enemy.id,
+      });
+    } else {
+      await ctx.reply('Error: Combat data is incomplete. Please try again.');
+    }
   } catch (error) {
     console.error('Error initiating combat:', error);
     await ctx.reply('An error occurred while trying to initiate combat. Please try again.');
