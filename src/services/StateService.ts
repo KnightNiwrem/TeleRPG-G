@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 import { UserState, UserStateAction } from '../core/types';
+import { env } from '../config/env';
 
 /**
  * StateService - Handles user state management without using grammyjs sessions
@@ -13,9 +14,9 @@ export class StateService {
   constructor() {
     // Initialize Redis connection
     this.redis = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD || '',
+      host: env.REDIS_HOST,
+      port: env.REDIS_PORT,
+      password: env.REDIS_PASSWORD,
     });
 
     // Test Redis connection

@@ -1,14 +1,10 @@
 import { Bot, GrammyError, HttpError } from 'grammy';
 import { StateService } from './services/StateService';
 import { registerCommandHandlers } from './handlers';
-
-// Ensure bot token is provided
-if (!process.env.BOT_TOKEN) {
-  throw new Error('BOT_TOKEN is not defined in the environment variables');
-}
+import { env } from './config/env';
 
 // Create bot instance
-export const bot = new Bot(process.env.BOT_TOKEN);
+export const bot = new Bot(env.BOT_TOKEN);
 
 // Initialize state service (used instead of grammyjs sessions)
 export const stateService = new StateService();
