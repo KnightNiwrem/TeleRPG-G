@@ -12,11 +12,28 @@ export default async function teardown(): Promise<void> {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
     
-    // Use dynamic import with absolute path to JS file
-    const jsPath = path.resolve(__dirname, './testSetup.js');
-    const testSetupModule = await import(jsPath);
-    const { teardownTestEnvironment } = testSetupModule;
-    await teardownTestEnvironment();
+    // Try both TS and JS versions of testSetup for teardown
+    try {
+      // First try the typescript version
+      const { teardownTestEnvironment } = await import('../utils/testSetup.js');
+      await teardownTestEnvironment();
+      console.log('Test environment teardown complete using testSetup.js');
+    } catch (error) {
+      console.error('Failed to import testSetup.js, trying testSetup.js directly:', error);
+      
+      // Fallback to the JS version
+      const jsPath = path.resolve(__dirname, './testSetup.js');
+      console.log('Trying to import teardown from:', jsPath);
+      
+      if (fs.existsSync(jsPath)) {
+        const testSetupModule = await import(jsPath);
+        const { teardownTestEnvironment } = testSetupModule;
+        await teardownTestEnvironment();
+        console.log('Test environment teardown complete using direct JS import');
+      } else {
+        throw new Error(`Could not find testSetup.js at ${jsPath}`);
+      }
+    }
   } catch (error) {
     console.error('Error in global teardown:', error);
     throw error;

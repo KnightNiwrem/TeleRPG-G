@@ -10,9 +10,14 @@ export default {
   testMatch: ['**/__tests__/**/*.test.ts'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.docker.mjs'],
-  extensionsToTreatAsEsm: ['.ts'],
+  extensionsToTreatAsEsm: ['.ts', '.js'],  // Treat both .ts and .js as ESM
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
+  globals: {
+    'ts-jest': {
+      useESM: true,
+    },
   },
   globalSetup: '<rootDir>/src/__tests__/utils/globalSetup.ts',
   globalTeardown: '<rootDir>/src/__tests__/utils/globalTeardown.ts',
