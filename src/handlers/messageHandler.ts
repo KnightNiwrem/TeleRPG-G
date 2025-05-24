@@ -2,13 +2,9 @@ import { Context } from 'grammy';
 import { stateService } from '../bot.js';
 import { CombatService } from '../services/CombatService.js';
 import { SkillService } from '../services/SkillService.js';
-import { InventoryService } from '../services/InventoryService.js';
-import { QuestService } from '../services/QuestService.js';
 
 const combatService = new CombatService();
 const skillService = new SkillService();
-const inventoryService = new InventoryService();
-const questService = new QuestService();
 
 export async function messageHandler(ctx: Context) {
   const userId = ctx.from?.id;

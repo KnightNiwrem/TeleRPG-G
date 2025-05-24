@@ -10,25 +10,57 @@ import { EntityType, ClassType } from '../../core/enums.js';
 jest.mock('../../services/CharacterService.js');
 jest.mock('../../services/AreaService.js');
 
+// Define interfaces for the mock objects
+interface MockDb {
+  selectFrom: jest.Mock;
+  insertInto: jest.Mock;
+  updateTable: jest.Mock;
+  deleteFrom: jest.Mock;
+  select: jest.Mock;
+  where: jest.Mock;
+  set: jest.Mock;
+  values: jest.Mock;
+  execute: jest.Mock;
+  executeTakeFirst: jest.Mock;
+  selectAll: jest.Mock;
+}
+
+interface MockRedis {
+  exists: jest.Mock;
+  get: jest.Mock;
+  set: jest.Mock;
+  del: jest.Mock;
+  hmset: jest.Mock;
+  hgetall: jest.Mock;
+}
+
+// Define a type that exposes private methods for testing
+interface TestCombatService extends CombatService {
+  findEnemyByName: (name: string, userId: number) => Promise<any>;
+  startCombat: (userId: number, characterId: number, enemyId: number) => Promise<void>;
+  getCombatState: (userId: number) => Promise<any>;
+  endCombat: (userId: number) => Promise<void>;
+}
+
 describe('CombatService', () => {
-  let combatService: CombatService;
-  let mockDb: any;
-  let mockRedis: any;
+  let combatService: TestCombatService;
+  let mockDb: MockDb;
+  let mockRedis: MockRedis;
   let mockCharacterService: jest.Mocked<CharacterService>;
   let mockAreaService: jest.Mocked<AreaService>;
 
   beforeEach(() => {
-    mockDb = createMockDb();
-    mockRedis = createMockRedis();
+    mockDb = createMockDb() as unknown as MockDb;
+    mockRedis = createMockRedis() as unknown as MockRedis;
     mockCharacterService = new CharacterService() as jest.Mocked<CharacterService>;
     mockAreaService = new AreaService() as jest.Mocked<AreaService>;
     
     combatService = new CombatService(
-      mockDb,
+      mockDb as any,
       mockRedis as any,
       mockCharacterService,
       mockAreaService
-    );
+    ) as unknown as TestCombatService;
   });
 
   describe('isInCombat', () => {
@@ -67,7 +99,7 @@ describe('CombatService', () => {
       mockRedis.exists.mockResolvedValueOnce(0);
       
       // Mock findEnemyByName to return null
-      jest.spyOn(combatService as any, 'findEnemyByName').mockResolvedValueOnce(null);
+      jest.spyOn(combatService, 'findEnemyByName').mockResolvedValueOnce(null);
       
       const result = await combatService.initiateCombat(123, 'NonExistentEnemy');
       

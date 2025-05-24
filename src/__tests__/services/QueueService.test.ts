@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 import '../mocks';
 import { createMockDb } from '../utils/mockUtils.js';
 import * as QueueService from '../../services/QueueService.js';
-import { Queue, Worker } from 'bullmq';
+import { Worker } from 'bullmq';
 
 // Create mock objects for bullmq
 const mockJob = {

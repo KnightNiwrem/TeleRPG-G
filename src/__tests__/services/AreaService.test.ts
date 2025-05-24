@@ -10,7 +10,7 @@ jest.mock('../../services/CharacterService');
 
 describe('AreaService', () => {
   let areaService: AreaService;
-  let mockDb: any;
+  let mockDb: ReturnType<typeof createMockDb>;
   let mockCharacterService: jest.Mocked<CharacterService>;
 
   beforeEach(() => {

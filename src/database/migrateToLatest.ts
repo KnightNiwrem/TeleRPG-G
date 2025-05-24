@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { Kysely, Migrator, FileMigrationProvider } from 'kysely';
+import { Migrator, FileMigrationProvider } from 'kysely';
 import { db } from './kysely.js';
 
 // Get dirname equivalent in ESM

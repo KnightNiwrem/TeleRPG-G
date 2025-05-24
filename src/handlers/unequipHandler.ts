@@ -1,5 +1,4 @@
 import { Context } from 'grammy';
-import { stateService } from '../bot.js';
 import { InventoryService } from '../services/InventoryService.js';
 
 const inventoryService = new InventoryService();
