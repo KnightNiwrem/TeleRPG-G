@@ -9,12 +9,13 @@
     "start": "node dist/index.js",
     "dev": "ts-node --esm src/index.ts",
     "migrate": "ts-node --esm src/database/migrateToLatest.ts",
+    "migrate:docker": "node --loader ts-node/esm src/database/migrateToLatest.ts",
     "seed": "ts-node --esm src/database/seed.ts",
     "lint": "eslint . --ext .ts",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.mjs",
     "test:docker": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.docker.mjs",
-    "test:docker:up": "docker-compose -f docker-compose.test.yml up --build",
-    "test:docker:down": "docker-compose -f docker-compose.test.yml down"
+    "test:docker:up": "docker compose -f docker-compose.test.yml up --build",
+    "test:docker:down": "docker compose -f docker-compose.test.yml down"
   },
   "repository": {
     "type": "git",
