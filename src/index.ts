@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import './config/env'; // Import and validate environment variables
 import { bot } from './bot.js';
-import { db } from './database/kysely.js';
 
 // Check database version and connection
 async function checkDatabaseConnection() {

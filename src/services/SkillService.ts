@@ -1,5 +1,20 @@
 import { db } from '../database/kysely.js';
-import { Skill, CharacterSkill } from '../core/types.js';
+import { Skill } from '../core/types.js';
+import { ClassType, SkillType } from '../core/enums.js';
+
+// Define row type for better type safety
+interface SkillRow {
+  id: number;
+  name: string;
+  description: string;
+  type: SkillType;
+  damage: number | null;
+  healing: number | null;
+  sp_cost: number;
+  cooldown: number;
+  class_restriction: ClassType | null;
+  level_requirement: number;
+}
 
 /**
  * SkillService - Handles skill-related operations
@@ -98,7 +113,7 @@ export class SkillService {
       .execute();
     
     // Map to Skill interface
-    return availableSkills.map((skill: any) => ({
+    return availableSkills.map((skill: SkillRow) => ({
       id: skill.id,
       name: skill.name,
       description: skill.description,

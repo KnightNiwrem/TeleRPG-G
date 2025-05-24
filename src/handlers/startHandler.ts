@@ -3,9 +3,6 @@ import { stateService } from '../bot.js';
 import { CharacterService } from '../services/CharacterService.js';
 import { InlineKeyboard } from 'grammy';
 
-// Import character-related types
-import { ClassType } from '../core/enums.js';
-
 const characterService = new CharacterService();
 
 export async function startHandler(ctx: Context) {

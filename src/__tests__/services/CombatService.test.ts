@@ -5,30 +5,67 @@ import { createMockDb, createMockRedis } from '../utils/mockUtils.js';
 import { CharacterService } from '../../services/CharacterService.js';
 import { AreaService } from '../../services/AreaService.js';
 import { EntityType, ClassType } from '../../core/enums.js';
+import { CombatState, Monster } from '../../core/types.js';
+import { Redis } from 'ioredis';
+import { db as defaultDb } from '../../database/kysely.js';
 
 // Mock the CharacterService and AreaService
 jest.mock('../../services/CharacterService.js');
 jest.mock('../../services/AreaService.js');
 
+// Define interfaces for the mock objects
+interface MockDb {
+  selectFrom: jest.Mock;
+  insertInto: jest.Mock;
+  updateTable: jest.Mock;
+  deleteFrom: jest.Mock;
+  select: jest.Mock;
+  where: jest.Mock;
+  set: jest.Mock;
+  values: jest.Mock;
+  execute: jest.Mock;
+  executeTakeFirst: jest.Mock;
+  selectAll: jest.Mock;
+}
+
+interface MockRedis {
+  exists: jest.Mock;
+  get: jest.Mock;
+  set: jest.Mock;
+  del: jest.Mock;
+  hmset: jest.Mock;
+  hgetall: jest.Mock;
+}
+
+import { CombatState, Monster } from '../../core/types.js';
+
+// Define a type that exposes private methods for testing
+interface TestCombatService extends CombatService {
+  findEnemyByName: (name: string, userId: number) => Promise<Monster | null>;
+  startCombat: (userId: number, characterId: number, enemyId: number) => Promise<void>;
+  getCombatState: (userId: number) => Promise<CombatState | null>;
+  endCombat: (userId: number) => Promise<void>;
+}
+
 describe('CombatService', () => {
-  let combatService: CombatService;
-  let mockDb: any;
-  let mockRedis: any;
+  let combatService: TestCombatService;
+  let mockDb: MockDb;
+  let mockRedis: MockRedis;
   let mockCharacterService: jest.Mocked<CharacterService>;
   let mockAreaService: jest.Mocked<AreaService>;
 
   beforeEach(() => {
-    mockDb = createMockDb();
-    mockRedis = createMockRedis();
+    mockDb = createMockDb() as unknown as MockDb;
+    mockRedis = createMockRedis() as unknown as MockRedis;
     mockCharacterService = new CharacterService() as jest.Mocked<CharacterService>;
     mockAreaService = new AreaService() as jest.Mocked<AreaService>;
     
     combatService = new CombatService(
-      mockDb,
-      mockRedis as any,
+      mockDb as unknown as typeof defaultDb,
+      mockRedis as unknown as Redis,
       mockCharacterService,
       mockAreaService
-    );
+    ) as unknown as TestCombatService;
   });
 
   describe('isInCombat', () => {
@@ -67,7 +104,7 @@ describe('CombatService', () => {
       mockRedis.exists.mockResolvedValueOnce(0);
       
       // Mock findEnemyByName to return null
-      jest.spyOn(combatService as any, 'findEnemyByName').mockResolvedValueOnce(null);
+      jest.spyOn(combatService, 'findEnemyByName').mockResolvedValueOnce(null);
       
       const result = await combatService.initiateCombat(123, 'NonExistentEnemy');
       
@@ -80,7 +117,7 @@ describe('CombatService', () => {
       mockRedis.exists.mockResolvedValueOnce(0);
       
       // Mock findEnemyByName to return an enemy
-      jest.spyOn(combatService as any, 'findEnemyByName').mockResolvedValueOnce({
+      jest.spyOn(combatService as unknown as TestCombatService, 'findEnemyByName').mockResolvedValueOnce({
         id: 1,
         name: 'Goblin',
         type: EntityType.MONSTER,
@@ -103,7 +140,7 @@ describe('CombatService', () => {
       mockRedis.exists.mockResolvedValueOnce(0);
       
       // Mock findEnemyByName to return an enemy
-      jest.spyOn(combatService as any, 'findEnemyByName').mockResolvedValueOnce({
+      jest.spyOn(combatService as unknown as TestCombatService, 'findEnemyByName').mockResolvedValueOnce({
         id: 1,
         name: 'Goblin',
         type: EntityType.MONSTER,
@@ -134,7 +171,7 @@ describe('CombatService', () => {
       });
       
       // Mock startCombat
-      jest.spyOn(combatService as any, 'startCombat').mockResolvedValueOnce(undefined);
+      jest.spyOn(combatService, 'startCombat').mockResolvedValueOnce(undefined);
       
       const result = await combatService.initiateCombat(123, 'Goblin');
       
@@ -148,14 +185,14 @@ describe('CombatService', () => {
   describe('processPlayerAttack', () => {
     test('should throw error if not in combat', async () => {
       // Mock getCombatState to return null
-      jest.spyOn(combatService as any, 'getCombatState').mockResolvedValueOnce(null);
+      jest.spyOn(combatService, 'getCombatState').mockResolvedValueOnce(null);
       
       await expect(combatService.processPlayerAttack(123)).rejects.toThrow('Not in combat');
     });
 
     test('should throw error if not player turn', async () => {
       // Mock getCombatState to return a state with enemy turn
-      jest.spyOn(combatService as any, 'getCombatState').mockResolvedValueOnce({
+      jest.spyOn(combatService, 'getCombatState').mockResolvedValueOnce({
         character: { id: 1, strength: 10, dexterity: 5 },
         enemy: { id: 2, currentHp: 20 },
         turn: 'enemy',
@@ -168,10 +205,10 @@ describe('CombatService', () => {
     test('should successfully process player attack', async () => {
       // Mock random for deterministic testing
       const originalRandom = global.Math.random;
-      global.Math.random = jest.fn(() => 0.3) as any;
+      global.Math.random = jest.fn(() => 0.3) as jest.Mock;
       
       // Mock getCombatState to return valid combat state
-      jest.spyOn(combatService as any, 'getCombatState').mockResolvedValueOnce({
+      jest.spyOn(combatService, 'getCombatState').mockResolvedValueOnce({
         character: { 
           id: 1,
           strength: 10, 
@@ -204,10 +241,10 @@ describe('CombatService', () => {
     test('should handle defeating the enemy', async () => {
       // Mock random for deterministic testing
       const originalRandom = global.Math.random;
-      global.Math.random = jest.fn(() => 0.3) as any;
+      global.Math.random = jest.fn(() => 0.3) as jest.Mock;
       
       // Mock getCombatState to return a combat state where enemy will be defeated
-      jest.spyOn(combatService as any, 'getCombatState').mockResolvedValueOnce({
+      jest.spyOn(combatService, 'getCombatState').mockResolvedValueOnce({
         character: { 
           id: 1,
           strength: 50, // High strength to guarantee defeating the enemy
@@ -225,7 +262,7 @@ describe('CombatService', () => {
       });
       
       // Mock endCombat
-      jest.spyOn(combatService as any, 'endCombat').mockResolvedValueOnce(undefined);
+      jest.spyOn(combatService, 'endCombat').mockResolvedValueOnce(undefined);
       
       // Mock handleBattleRewards
       mockCharacterService.handleBattleRewards = jest.fn().mockResolvedValueOnce(undefined);

@@ -393,8 +393,9 @@ export class InventoryService {
     
     // Validate slot name
     try {
-      const slot = slotName as EquipmentSlot;
-    } catch (error) {
+      // Implicit validation by trying to cast
+      slotName as EquipmentSlot;
+    } catch {
       return { success: false, message: `Invalid equipment slot: ${slotName}. Valid slots are: ${Object.values(EquipmentSlot).join(', ')}` };
     }
     
@@ -407,7 +408,7 @@ export class InventoryService {
         'items.name'
       ])
       .where('inventory_items.character_id', '=', character.id)
-      .where('items.equipment_slot', '=', slotName as any)
+      .where('items.equipment_slot', '=', slotName as unknown as string)
       .where('inventory_items.equipped', '=', true)
       .executeTakeFirst();
     
