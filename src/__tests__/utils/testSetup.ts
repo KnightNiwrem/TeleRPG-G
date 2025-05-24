@@ -52,9 +52,10 @@ export async function createTestCharacter(userId: number, name: string, characte
     .values({
       user_id: userId,
       name,
+      type: 'character',
       class: characterClass,
       level: 1,
-      exp: 0,
+      experience: 0,
       max_hp: 100,
       current_hp: 100,
       max_sp: 50,
@@ -62,10 +63,9 @@ export async function createTestCharacter(userId: number, name: string, characte
       strength: 10,
       intelligence: 10,
       dexterity: 10,
-      constitution: 10,
       wisdom: 10,
-      charisma: 10,
-      gold: 100,
+      vitality: 10,
+      area_id: 1,
     })
     .returning('id')
     .executeTakeFirst();
