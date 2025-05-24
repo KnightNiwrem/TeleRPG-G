@@ -18,11 +18,15 @@ if (!process.env.REDIS_HOST) {
   process.env.REDIS_PASSWORD = '';
 }
 
-// In ESM mode, jest is not available as a global. We'll check if we can import it.
+// In ESM mode, jest is not available as a global. We need to import it.
 try {
-  // Import dynamically if needed in the future
-  // For now, we'll just skip the mock disabling as it's causing issues
-  console.log('Jest setup complete for Docker environment');
+  const { jest } = await import('@jest/globals');
+  
+  // Explicitly unmock Redis and database modules for Docker testing
+  jest.dontMock('ioredis');
+  jest.dontMock('../../database/kysely.js');
+  
+  console.log('Jest setup complete for Docker environment - using real Redis and Postgres');
 } catch (error) {
-  console.error('Error in Jest setup:', error);
+  console.error('Error setting up Jest environment:', error);
 }
