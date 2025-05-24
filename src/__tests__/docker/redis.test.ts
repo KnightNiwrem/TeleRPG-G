@@ -1,19 +1,19 @@
 import { describe, expect, test, afterEach, beforeAll } from '@jest/globals';
-import { getRedisClient, setupTestDatabase } from '../utils/testSetup.js';
+import * as testSetupModule from '../utils/testSetup.js';
 
 describe('Redis Integration Tests', () => {
   // Initialize Redis client before tests
   beforeAll(async () => {
-    await setupTestDatabase();
+    await testSetupModule.setupTestDatabase();
   });
 
   // Clean up after each test
   afterEach(async () => {
-    await getRedisClient().flushdb();
+    await testSetupModule.getRedisClient().flushdb();
   });
 
   test('should set and retrieve values from Redis', async () => {
-    const redis = getRedisClient();
+    const redis = testSetupModule.getRedisClient();
     
     // Set a value
     await redis.set('test:key', 'test-value');
@@ -26,7 +26,7 @@ describe('Redis Integration Tests', () => {
   });
 
   test('should delete values from Redis', async () => {
-    const redis = getRedisClient();
+    const redis = testSetupModule.getRedisClient();
     
     // Set a value
     await redis.set('test:delete', 'delete-me');
@@ -44,7 +44,7 @@ describe('Redis Integration Tests', () => {
   });
 
   test('should set values with expiration', async () => {
-    const redis = getRedisClient();
+    const redis = testSetupModule.getRedisClient();
     
     // Set a value with an expiration of 1 second
     await redis.set('test:expire', 'expiring-value', 'EX', 1);

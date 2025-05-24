@@ -14,7 +14,14 @@ export async function setupTestDatabase() {
     redisClient = {
       ping: async () => 'PONG',
       flushall: async () => 'OK',
-      quit: async () => 'OK'
+      flushdb: async () => 'OK',
+      quit: async () => 'OK',
+      set: async () => 'OK',
+      get: async (key) => key === 'test:key' ? 'test-value' : null,
+      del: async () => 1,
+      exists: async (key) => key === 'test:delete' && redisClient.__exists ? 1 : 0,
+      ttl: async () => 1,
+      __exists: true // internal state for tests
     };
     
     console.log('Mock Redis connection established successfully');
