@@ -14,7 +14,26 @@ export default async function setup(): Promise<void> {
     
     console.log('Current directory:', __dirname);
     
-    // Try both TS and JS versions of testSetup
+    // Check if we're in Docker environment
+    const isDockerEnv = process.env.NODE_ENV === 'test' && 
+                        (process.env.DB_HOST === 'postgres-test' || 
+                         process.env.REDIS_HOST === 'redis-test');
+    
+    if (isDockerEnv) {
+      console.log('Detected Docker test environment - using real services');
+      try {
+        // Use the Docker-specific setup
+        const { setupTestDatabase } = await import('../utils/dockerTestSetup.js');
+        await setupTestDatabase();
+        console.log('Docker test environment setup complete');
+        return;
+      } catch (error) {
+        console.error('Failed to import dockerTestSetup.js:', error);
+        throw error;
+      }
+    }
+    
+    // For non-Docker environment, use the regular mocked setup
     try {
       // First try the typescript version
       const { setupTestDatabase } = await import('../utils/testSetup.js');

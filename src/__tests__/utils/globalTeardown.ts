@@ -12,7 +12,26 @@ export default async function teardown(): Promise<void> {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
     
-    // Try both TS and JS versions of testSetup for teardown
+    // Check if we're in Docker environment
+    const isDockerEnv = process.env.NODE_ENV === 'test' && 
+                        (process.env.DB_HOST === 'postgres-test' || 
+                         process.env.REDIS_HOST === 'redis-test');
+    
+    if (isDockerEnv) {
+      console.log('Detected Docker test environment - cleaning up real services');
+      try {
+        // Use the Docker-specific teardown
+        const { teardownTestEnvironment } = await import('../utils/dockerTestSetup.js');
+        await teardownTestEnvironment();
+        console.log('Docker test environment teardown complete');
+        return;
+      } catch (error) {
+        console.error('Failed to import dockerTestSetup.js for teardown:', error);
+        throw error;
+      }
+    }
+    
+    // For non-Docker environment, use the regular mocked teardown
     try {
       // First try the typescript version
       const { teardownTestEnvironment } = await import('../utils/testSetup.js');

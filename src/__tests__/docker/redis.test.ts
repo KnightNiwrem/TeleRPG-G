@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeAll, afterEach } from '@jest/globals';
-import { getRedisClient, setupTestDatabase } from '../utils/testSetup.js';
+import { getRedisClient, setupTestDatabase } from '../utils/dockerTestSetup.js';
 
 describe('Redis Integration Tests', () => {
   // Setup Redis client before all tests
