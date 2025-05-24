@@ -41,7 +41,7 @@ describe('Database Integration Tests', () => {
     // Update the character
     await db
       .updateTable('characters')
-      .set({ level: 2, exp: 100 })
+      .set({ level: 2, experience: 100 })
       .where('id', '=', testCharacterId)
       .execute();
 
@@ -55,6 +55,6 @@ describe('Database Integration Tests', () => {
     // Verify the updates
     expect(updatedCharacter).not.toBeNull();
     expect(updatedCharacter?.level).toBe(2);
-    expect(updatedCharacter?.exp).toBe(100);
+    expect(updatedCharacter?.experience).toBe(100);
   });
 });
