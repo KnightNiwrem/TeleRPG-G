@@ -3,13 +3,30 @@ import '../mocks';
 import { QuestService } from '../../services/QuestService.js';
 import { createMockDb } from '../utils/mockUtils.js';
 
+// Define interface for mock database
+interface MockDb {
+  selectFrom: jest.Mock;
+  insertInto: jest.Mock;
+  updateTable: jest.Mock;
+  deleteFrom: jest.Mock;
+  select: jest.Mock;
+  where: jest.Mock;
+  whereIn: jest.Mock;
+  set: jest.Mock;
+  values: jest.Mock;
+  execute: jest.Mock;
+  executeTakeFirst: jest.Mock;
+  selectAll: jest.Mock;
+  innerJoin: jest.Mock;
+}
+
 describe('QuestService', () => {
   let questService: QuestService;
-  let mockDb: any;
+  let mockDb: MockDb;
 
   beforeEach(() => {
-    mockDb = createMockDb();
-    questService = new QuestService(mockDb);
+    mockDb = createMockDb() as unknown as MockDb;
+    questService = new QuestService(mockDb as any);
   });
 
   describe('acceptQuest', () => {
