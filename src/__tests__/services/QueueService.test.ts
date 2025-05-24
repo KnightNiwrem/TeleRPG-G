@@ -22,12 +22,26 @@ const mockWorker = {
 };
 
 // Mock modules
-jest.mock('ioredis');
-jest.mock('bullmq');
-
 jest.mock('../../database/kysely.js', () => ({
   db: createMockDb()
 }));
+
+// Mock ioredis explicitly instead of relying on mocks.ts
+jest.mock('ioredis', () => {
+  return {
+    Redis: jest.fn().mockImplementation(() => ({
+      on: jest.fn(),
+      connect: jest.fn().mockResolvedValue({}),
+      disconnect: jest.fn().mockResolvedValue({}),
+      quit: jest.fn().mockResolvedValue({}),
+      flushall: jest.fn().mockResolvedValue({}),
+      flushdb: jest.fn().mockResolvedValue({}),
+      ping: jest.fn().mockResolvedValue('PONG')
+    }))
+  };
+});
+
+jest.mock('bullmq');
 
 // Mock env
 jest.mock('../../config/env', () => ({
