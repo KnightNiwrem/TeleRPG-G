@@ -17,8 +17,5 @@ const mockRedisInstance = {
   ping: jest.fn().mockResolvedValue('PONG'),
 };
 
+// Create and export Redis constructor function
 export const Redis = jest.fn().mockImplementation(() => mockRedisInstance);
-
-export default {
-  Redis
-};

@@ -30,10 +30,3 @@ export const Job = jest.fn(() => mockJob);
 export const FlowProducer = jest.fn(() => ({
   close: jest.fn().mockResolvedValue({}),
 }));
-
-export default {
-  Queue,
-  Worker,
-  Job,
-  FlowProducer
-};
