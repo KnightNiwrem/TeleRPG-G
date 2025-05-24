@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import '../mocks';
 import { QuestService } from '../../services/QuestService.js';
 import { createMockDb } from '../utils/mockUtils.js';
+import { db as defaultDb } from '../../database/kysely.js';
 
 // Define interface for mock database
 interface MockDb {
@@ -26,7 +27,7 @@ describe('QuestService', () => {
 
   beforeEach(() => {
     mockDb = createMockDb() as unknown as MockDb;
-    questService = new QuestService(mockDb as any);
+    questService = new QuestService(mockDb as unknown as typeof defaultDb);
   });
 
   describe('acceptQuest', () => {

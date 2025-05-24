@@ -5,6 +5,9 @@ import { createMockDb, createMockRedis } from '../utils/mockUtils.js';
 import { CharacterService } from '../../services/CharacterService.js';
 import { AreaService } from '../../services/AreaService.js';
 import { EntityType, ClassType } from '../../core/enums.js';
+import { CombatState, Monster } from '../../core/types.js';
+import { Redis } from 'ioredis';
+import { db as defaultDb } from '../../database/kysely.js';
 
 // Mock the CharacterService and AreaService
 jest.mock('../../services/CharacterService.js');
@@ -34,11 +37,13 @@ interface MockRedis {
   hgetall: jest.Mock;
 }
 
+import { CombatState, Monster } from '../../core/types.js';
+
 // Define a type that exposes private methods for testing
 interface TestCombatService extends CombatService {
-  findEnemyByName: (name: string, userId: number) => Promise<any>;
+  findEnemyByName: (name: string, userId: number) => Promise<Monster | null>;
   startCombat: (userId: number, characterId: number, enemyId: number) => Promise<void>;
-  getCombatState: (userId: number) => Promise<any>;
+  getCombatState: (userId: number) => Promise<CombatState | null>;
   endCombat: (userId: number) => Promise<void>;
 }
 
@@ -56,8 +61,8 @@ describe('CombatService', () => {
     mockAreaService = new AreaService() as jest.Mocked<AreaService>;
     
     combatService = new CombatService(
-      mockDb as any,
-      mockRedis as any,
+      mockDb as unknown as typeof defaultDb,
+      mockRedis as unknown as Redis,
       mockCharacterService,
       mockAreaService
     ) as unknown as TestCombatService;
@@ -112,7 +117,7 @@ describe('CombatService', () => {
       mockRedis.exists.mockResolvedValueOnce(0);
       
       // Mock findEnemyByName to return an enemy
-      jest.spyOn(combatService as any, 'findEnemyByName').mockResolvedValueOnce({
+      jest.spyOn(combatService as unknown as TestCombatService, 'findEnemyByName').mockResolvedValueOnce({
         id: 1,
         name: 'Goblin',
         type: EntityType.MONSTER,
@@ -135,7 +140,7 @@ describe('CombatService', () => {
       mockRedis.exists.mockResolvedValueOnce(0);
       
       // Mock findEnemyByName to return an enemy
-      jest.spyOn(combatService as any, 'findEnemyByName').mockResolvedValueOnce({
+      jest.spyOn(combatService as unknown as TestCombatService, 'findEnemyByName').mockResolvedValueOnce({
         id: 1,
         name: 'Goblin',
         type: EntityType.MONSTER,
