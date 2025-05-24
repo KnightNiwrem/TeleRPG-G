@@ -1,3 +1,4 @@
+// Mock implementation for bullmq
 import { jest } from '@jest/globals';
 
 // Mock objects for BullMQ
@@ -13,15 +14,26 @@ const mockQueue = {
   add: jest.fn().mockResolvedValue(mockJob),
   getJob: jest.fn().mockResolvedValue(mockJob),
   close: jest.fn().mockResolvedValue({}),
+  disconnect: jest.fn().mockResolvedValue({}),
 };
 
 const mockWorker = {
   on: jest.fn(),
   close: jest.fn().mockResolvedValue({}),
+  disconnect: jest.fn().mockResolvedValue({}),
 };
 
 // Export mock classes
 export const Queue = jest.fn(() => mockQueue);
 export const Worker = jest.fn(() => mockWorker);
 export const Job = jest.fn(() => mockJob);
-export const FlowProducer = jest.fn(() => ({}));
+export const FlowProducer = jest.fn(() => ({
+  close: jest.fn().mockResolvedValue({}),
+}));
+
+export default {
+  Queue,
+  Worker,
+  Job,
+  FlowProducer
+};

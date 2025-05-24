@@ -1,7 +1,12 @@
-import { describe, expect, test, afterEach } from '@jest/globals';
-import { getRedisClient } from '../utils/testSetup.js';
+import { describe, expect, test, beforeAll, afterEach } from '@jest/globals';
+import { getRedisClient, setupTestDatabase } from '../utils/testSetup.js';
 
 describe('Redis Integration Tests', () => {
+  // Setup Redis client before all tests
+  beforeAll(async () => {
+    await setupTestDatabase();
+  });
+  
   // Clean up after each test
   afterEach(async () => {
     await getRedisClient().flushdb();

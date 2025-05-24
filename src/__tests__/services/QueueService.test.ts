@@ -56,6 +56,11 @@ describe('QueueService', () => {
     mockQueue.getJob.mockClear();
     mockWorker.on.mockClear();
   });
+  
+  // Clean up resources after all tests
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
 
   describe('startLongRest', () => {
     test('should throw error if character not found', async () => {
