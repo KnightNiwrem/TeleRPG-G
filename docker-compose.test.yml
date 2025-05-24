@@ -59,4 +59,4 @@ services:
       redis-test:
         condition: service_healthy
     command: >
-      sh -c "npm run migrate:docker && npm run test:docker"
+      sh -c "npm run build:test && npm run migrate:docker && npm run test:docker"

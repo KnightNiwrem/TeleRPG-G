@@ -8,11 +8,11 @@ export default {
   },
   testEnvironment: 'node',
   testMatch: ['**/__tests__/**/*.test.ts'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.docker.mjs'],
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1.js',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   globalSetup: '<rootDir>/src/__tests__/utils/globalSetup.ts',
   globalTeardown: '<rootDir>/src/__tests__/utils/globalTeardown.ts',

@@ -15,7 +15,8 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.mjs",
     "test:docker": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.docker.mjs",
     "test:docker:up": "docker compose -f docker-compose.test.yml up --build",
-    "test:docker:down": "docker compose -f docker-compose.test.yml down"
+    "test:docker:down": "docker compose -f docker-compose.test.yml down",
+    "build:test": "tsc -p tsconfig.json"
   },
   "repository": {
     "type": "git",
