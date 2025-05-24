@@ -8,7 +8,7 @@ export default {
   },
   testEnvironment: 'node',
   testMatch: ['**/__tests__/**/*.test.ts'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.docker.mjs'],
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
