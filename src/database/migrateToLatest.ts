@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { Kysely, Migrator, FileMigrationProvider } from 'kysely';
-import { db } from './kysely.js';
+import { db } from './kysely';
 
 // Get dirname equivalent in ESM
 const __filename = fileURLToPath(import.meta.url);

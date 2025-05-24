@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeAll, afterAll } from '@jest/globals';
-import { db } from '../../database/kysely.js';
-import { createTestCharacter, cleanupTestCharacter } from '../utils/testSetup.js';
+import { db } from '../../database/kysely';
+import { createTestCharacter, cleanupTestCharacter } from '../utils/testSetup';
 
 // Test character ID will be stored here for cleanup
 let testCharacterId: number;

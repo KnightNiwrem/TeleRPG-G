@@ -1,5 +1,5 @@
 import { describe, expect, test, afterEach } from '@jest/globals';
-import { getRedisClient } from '../utils/testSetup.js';
+import { getRedisClient } from '../utils/testSetup';
 
 describe('Redis Integration Tests', () => {
   // Clean up after each test
