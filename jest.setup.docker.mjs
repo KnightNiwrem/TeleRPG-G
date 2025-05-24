@@ -24,7 +24,7 @@ try {
   
   // Explicitly unmock Redis and database modules for Docker testing
   jest.dontMock('ioredis');
-  jest.dontMock('../../database/kysely.js');
+  jest.dontMock('../../database/kysely');
   
   console.log('Jest setup complete for Docker environment - using real Redis and Postgres');
 } catch (error) {

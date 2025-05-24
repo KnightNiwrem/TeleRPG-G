@@ -1,6 +1,6 @@
 // Docker-specific test setup for using real Redis and Postgres instances
-import { migrateToLatest } from '../../database/migrateToLatest.js';
-import { db } from '../../database/kysely.js';
+import { migrateToLatest } from '../../database/migrateToLatest';
+import { db } from '../../database/kysely';
 import { Redis } from 'ioredis';
 
 // Redis client for testing

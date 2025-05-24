@@ -23,7 +23,7 @@ export default async function setup(): Promise<void> {
       console.log('Detected Docker test environment - using real services');
       try {
         // Use the Docker-specific setup
-        const { setupTestDatabase } = await import('../utils/dockerTestSetup.js');
+        const { setupTestDatabase } = await import('../utils/dockerTestSetup');
         await setupTestDatabase();
         console.log('Docker test environment setup complete');
         return;
@@ -36,7 +36,7 @@ export default async function setup(): Promise<void> {
     // For non-Docker environment, use the regular mocked setup
     try {
       // First try the typescript version
-      const { setupTestDatabase } = await import('../utils/testSetup.js');
+      const { setupTestDatabase } = await import('../utils/testSetup');
       await setupTestDatabase();
       console.log('Test database setup complete using testSetup.js');
     } catch (error) {
