@@ -1,0 +1,27 @@
+# COPILOT REFERENCE NOTES FOR TELERPG-G
+
+## Project Setup
+- This is an ESM Typescript project. Only attempt fixes and ideas that work for ESM, not CJS.
+- The project uses Node.js with TypeScript, configured with module: "NodeNext" and moduleResolution: "NodeNext".
+- Package.json is configured with "type": "module" to enforce ESM behavior.
+
+## Testing
+- Test step must use real Postgres and Redis docker containers. Do NOT mock Postgres and Redis.
+- Docker tests are configured in jest.config.docker.mjs and jest.setup.docker.mjs.
+- To run Docker tests:
+  1. Start containers: npm run test:docker:up
+  2. Run tests: npm run test:docker
+  3. Stop containers: npm run test:docker:down
+- Docker tests connect to PostgreSQL on port 5433 and Redis on port 6380.
+
+## Development Practices
+- App functions must be written in a way that is testable and tested.
+- Integration tests should import from dockerTestSetup.js to use real database and Redis connections.
+- Test isolation is important - tests should clean up after themselves.
+- For Redis tests, use flushdb() after each test.
+- For database tests, delete test-specific records after completion.
+
+## Important Notes
+- Do not run the test step. You do not have docker-compose needed for running the test step.
+- When importing from other files, use the .js extension even for TypeScript files.
+- The project uses ESM-specific patterns for imports/exports.
