@@ -19,6 +19,10 @@ export default {
       useESM: true,
     },
   },
+  // Use Docker-specific global setup/teardown
   globalSetup: '<rootDir>/src/__tests__/utils/globalSetup.ts',
   globalTeardown: '<rootDir>/src/__tests__/utils/globalTeardown.ts',
+  
+  // Decrease the test timeout for faster feedback
+  testTimeout: 10000,
 };
