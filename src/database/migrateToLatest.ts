@@ -3,7 +3,7 @@ import path from 'path';
 import { Kysely, Migrator, FileMigrationProvider } from 'kysely';
 import { db } from './kysely.js';
 
-async function migrateToLatest() {
+async function migrateToLatest(exitOnError = true, closeConnection = true) {
   const migrator = new Migrator({
     db,
     provider: new FileMigrationProvider({
@@ -30,14 +30,22 @@ async function migrateToLatest() {
   if (error) {
     console.error('Failed to migrate');
     console.error(error);
-    process.exit(1);
+    if (exitOnError) {
+      process.exit(1);
+    } else {
+      throw error;
+    }
   }
 
-  await db.destroy();
+  if (closeConnection) {
+    await db.destroy();
+  }
 }
 
-// Run the migration
-migrateToLatest();
+// Run the migration if this script is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  migrateToLatest(true, true);
+}
 
 // Export for use in other files
 export { migrateToLatest };

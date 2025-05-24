@@ -94,13 +94,45 @@ npm start
 
 ## Docker Setup
 
-You can also run the application using Docker:
+### Running the Application
+
+You can run the application using Docker:
 
 ```bash
 docker-compose up -d
 ```
 
 This will start PostgreSQL, Redis, and the application in separate containers.
+
+## Running Tests
+
+### Running Tests with Mocks
+
+```bash
+npm test
+```
+
+This will run tests using Jest with mocked database and Redis connections.
+
+### Running Tests with Docker
+
+To run tests with real dockerized PostgreSQL and Redis:
+
+```bash
+npm run test:docker:up
+```
+
+This will:
+1. Start PostgreSQL and Redis containers for testing
+2. Run database migrations to set up the schema
+3. Execute tests against the real services
+4. Clean up after tests are complete
+
+To shut down the test containers:
+
+```bash
+npm run test:docker:down
+```
 
 ## Bot Commands
 
