@@ -58,7 +58,7 @@ describe('QueueService', () => {
   });
   
   // Clean up resources after all tests
-  afterAll(() => {
+  afterAll(async () => {
     jest.restoreAllMocks();
   });
 
