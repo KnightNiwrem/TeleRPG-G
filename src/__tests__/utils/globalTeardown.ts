@@ -21,7 +21,7 @@ export default async function teardown(): Promise<void> {
       console.log('Detected Docker test environment - cleaning up real services');
       try {
         // Use the Docker-specific teardown
-        const { teardownTestEnvironment } = await import('../utils/dockerTestSetup');
+        const { teardownTestEnvironment } = await import('../utils/dockerTestSetup.js');
         await teardownTestEnvironment();
         console.log('Docker test environment teardown complete');
         return;
@@ -34,7 +34,7 @@ export default async function teardown(): Promise<void> {
     // For non-Docker environment, use the regular mocked teardown
     try {
       // First try the typescript version
-      const { teardownTestEnvironment } = await import('../utils/testSetup');
+      const { teardownTestEnvironment } = await import('../utils/testSetup.js');
       await teardownTestEnvironment();
       console.log('Test environment teardown complete using testSetup.js');
     } catch (error) {
