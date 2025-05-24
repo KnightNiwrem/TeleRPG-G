@@ -2,7 +2,6 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import * as fs from 'fs';
-import { setupTestDatabase } from './testSetupExports.js';
 
 // Global setup function that runs before all tests
 export default async function setup(): Promise<void> {
@@ -16,6 +15,10 @@ export default async function setup(): Promise<void> {
     console.log('Current directory:', __dirname);
     console.log('Files in directory:', fs.readdirSync(__dirname));
     
+    // Use dynamic import with absolute path to JS file
+    const jsPath = path.resolve(__dirname, './testSetup.js');
+    const testSetupModule = await import(jsPath);
+    const { setupTestDatabase } = testSetupModule;
     await setupTestDatabase();
   } catch (error) {
     console.error('Error in global setup:', error);
