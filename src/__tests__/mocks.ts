@@ -8,6 +8,12 @@
 
 import { jest } from '@jest/globals';
 
+// Ensure mocks are properly closed after tests
+afterAll(async () => {
+  // Reset all mocks to avoid lingering connections
+  jest.restoreAllMocks();
+});
+
 // Automatically mock these modules
 jest.mock('../../config/env.js');
 jest.mock('../../database/kysely.js');
