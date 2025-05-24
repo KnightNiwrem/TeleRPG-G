@@ -12,7 +12,7 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.docker.mjs'],
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^(\\.{1,2}/.*)\\.js$': '$1.js',
   },
   globalSetup: '<rootDir>/src/__tests__/utils/globalSetup.ts',
   globalTeardown: '<rootDir>/src/__tests__/utils/globalTeardown.ts',

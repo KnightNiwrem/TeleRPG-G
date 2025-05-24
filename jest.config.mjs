@@ -12,6 +12,6 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.mjs'],
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^(\\.{1,2}/.*)\\.js$': '$1.js',
   },
 };

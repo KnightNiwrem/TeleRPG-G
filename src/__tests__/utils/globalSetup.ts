@@ -2,6 +2,6 @@
 // Global setup function that runs before all tests
 export default async function setup(): Promise<void> {
   console.log('Setting up test environment...');
-  const { setupTestDatabase } = await import('./testSetup');
+  const { setupTestDatabase } = await import('./testSetup.js');
   await setupTestDatabase();
 }

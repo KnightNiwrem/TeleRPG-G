@@ -1,5 +1,5 @@
-import { db } from './kysely';
-import { AreaType, ClassType, EntityType, EquipmentSlot, ItemType, ObjectiveType, QuestType, SkillType } from '../core/enums';
+import { db } from './kysely.js';
+import { AreaType, ClassType, EntityType, EquipmentSlot, ItemType, ObjectiveType, QuestType, SkillType } from '../core/enums.js';
 
 async function seedDatabase() {
   console.log('Starting database seeding...');
