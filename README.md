@@ -37,7 +37,6 @@ A Telegram bot RPG game built with [grammy](https://grammy.dev/) and [Bun](https
 ### Available Scripts
 
 - `bun start`: Start the bot in development mode
-- `bun run build`: Build the project for production
 - `bun run lint`: Run ESLint to check code quality
 - `bun run typecheck`: Run TypeScript type checking
 
