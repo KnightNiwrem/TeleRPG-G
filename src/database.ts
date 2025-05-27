@@ -5,7 +5,7 @@ import { config } from "./config.js";
 // Define the database schema
 interface Database {
   // Tables will be defined here if needed
-  chat_members: any; // This will store chat member information
+  chat_members: Record<string, unknown>; // This will store chat member information
 }
 
 // Create pg pool

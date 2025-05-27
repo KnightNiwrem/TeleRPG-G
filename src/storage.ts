@@ -7,7 +7,11 @@ import { config } from "./config.js";
  * Create a PostgreSQL storage adapter for Grammy chat members plugin
  * @returns Configured PostgreSQL storage adapter instance
  */
-export async function createStorageAdapter() {
+export async function createStorageAdapter(): Promise<{
+  read(key: string): Promise<ChatMember | undefined>;
+  write(key: string, value: ChatMember): Promise<void>;
+  delete(key: string): Promise<void>;
+}> {
   const client = new Client({
     host: config.database.host,
     port: config.database.port,
