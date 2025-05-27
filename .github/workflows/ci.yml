@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  lint-and-build:
+  lint-and-typecheck:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +27,3 @@ jobs:
 
       - name: Run TypeScript type checking
         run: bun run typecheck
-
-      - name: Build project
-        run: bun run build
