@@ -5,7 +5,6 @@
   "private": true,
   "scripts": {
     "start": "bun run src/index.ts",
-    "build": "bun build src/index.ts --outdir ./dist --target node",
     "lint": "eslint --ext .ts ./src",
     "typecheck": "tsc --noEmit"
   },
