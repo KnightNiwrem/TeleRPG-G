@@ -5,12 +5,6 @@ import { Bot, BotError, type Context } from "grammy";
  */
 export function errorHandler(error: BotError<Context>): void {
   console.error("Error in bot handler:", error);
-  // Try to reply to the user if context is available
-  if (error.ctx) {
-    error.ctx.reply("An error occurred while processing your request").catch((replyErr) => {
-      console.error("Failed to send error message to user:", replyErr);
-    });
-  }
 }
 
 /**
