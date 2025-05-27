@@ -1,7 +1,7 @@
 import { Bot, BotError, type Context } from "grammy";
-import { ChatMemberUpdated } from "@grammyjs/types";
+import { type ChatMemberUpdated } from "grammy/types";
 import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
-import { MemoryAdapter } from "./storage.js";
+import { createStorageAdapter } from "./storage.js";
 
 // Define the bot context type including the chat members flavor
 type BotContext = Context & ChatMembersFlavor;
@@ -17,12 +17,12 @@ export function errorHandler(error: BotError<BotContext>): void {
  * Set up the Telegram bot with handlers and middleware
  * @param bot - Grammy Bot instance
  */
-export function setupBot(bot: Bot<BotContext>): void {
-  // Create in-memory adapter for chat members
-  const memoryAdapter = new MemoryAdapter();
+export async function setupBot(bot: Bot<BotContext>): Promise<void> {
+  // Create PostgreSQL adapter for chat members
+  const psqlAdapter = await createStorageAdapter();
   
   // Create chat members plugin
-  const membersPlugin = chatMembers(memoryAdapter);
+  const membersPlugin = chatMembers(psqlAdapter);
   
   // Register chat members plugin middleware
   bot.use(membersPlugin);
