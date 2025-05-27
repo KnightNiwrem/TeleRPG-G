@@ -1,15 +1,26 @@
-import { Bot } from "grammy";
+import { Bot, BotError, type Context } from "grammy";
+
+/**
+ * Create an error handler middleware that works with both long polling and webhooks
+ */
+export function errorHandler(error: BotError<Context>): void {
+  console.error("Error in bot handler:", error);
+  // Try to reply to the user if context is available
+  if (error.ctx) {
+    error.ctx.reply("An error occurred while processing your request").catch((replyErr) => {
+      console.error("Failed to send error message to user:", replyErr);
+    });
+  }
+}
 
 /**
  * Set up the Telegram bot with handlers and middleware
  * @param bot - Grammy Bot instance
  */
 export function setupBot(bot: Bot): void {
-  // Error handling middleware
-  bot.catch((err) => {
-    console.error("Error in bot handler:", err);
-  });
-
+  // Error handling middleware for webhooks and long polling
+  bot.errorBoundary(errorHandler);
+  
   // Command handlers
   bot.command("start", async (ctx) => {
     await ctx.reply(
