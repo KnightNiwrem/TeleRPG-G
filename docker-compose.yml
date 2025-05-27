@@ -8,21 +8,3 @@ services:
     env_file: .env
     environment:
       - NODE_ENV=production
-    depends_on:
-      - postgres
-      
-  postgres:
-    image: postgres:17
-    container_name: telerpg-postgres
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=telerpg
-      - POSTGRES_PASSWORD=telerpg_password
-      - POSTGRES_DB=telerpg_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-volumes:
-  postgres_data:

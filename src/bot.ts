@@ -1,13 +1,15 @@
-import { Bot, BotError, type Context, ApiClientOptions, hydrateApi } from "grammy";
+import { Bot, BotError, type Context } from "grammy";
 import { ChatMemberUpdated } from "@grammyjs/types";
-import { ChatMembers } from "grammy-chat-members";
-import { PostgresAdapter } from "@grammyjs/storage-postgres";
-import { config } from "./config.js";
+import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
+import { MemoryAdapter } from "./storage.js";
+
+// Define the bot context type including the chat members flavor
+type BotContext = Context & ChatMembersFlavor;
 
 /**
  * Create an error handler middleware that works with both long polling and webhooks
  */
-export function errorHandler(error: BotError<Context>): void {
+export function errorHandler(error: BotError<BotContext>): void {
   console.error("Error in bot handler:", error);
 }
 
@@ -15,30 +17,17 @@ export function errorHandler(error: BotError<Context>): void {
  * Set up the Telegram bot with handlers and middleware
  * @param bot - Grammy Bot instance
  */
-export function setupBot(bot: Bot): void {
-  // Configure the chat members plugin with PostgreSQL storage
-  const storage = new PostgresAdapter({
-    pool: {
-      host: config.database.host,
-      port: config.database.port,
-      user: config.database.user,
-      password: config.database.password,
-      database: config.database.database,
-    },
-    tableName: "chat_members",
-  });
-
-  // Create chat members plugin using PostgreSQL storage
-  const chatMembers = new ChatMembers({
-    storage,
-    // Allow all update types using hydrateApi
-    allowedUpdates: hydrateApi(new ApiClientOptions()).allowed_updates,
-  });
-
+export function setupBot(bot: Bot<BotContext>): void {
+  // Create in-memory adapter for chat members
+  const memoryAdapter = new MemoryAdapter();
+  
+  // Create chat members plugin
+  const membersPlugin = chatMembers(memoryAdapter);
+  
   // Register chat members plugin middleware
-  bot.use(chatMembers.middleware());
+  bot.use(membersPlugin);
 
-  // Handle chat member updates
+  // Handle chat member updates (when users join/leave groups)
   bot.on("chat_member", async (ctx) => {
     const update = ctx.chatMember as ChatMemberUpdated;
     console.log(`Chat member update in chat ${update.chat.id}:`, 
@@ -74,14 +63,25 @@ export function setupBot(bot: Bot): void {
     }
     
     try {
-      // Get all members in the current chat
-      const members = await chatMembers.getMembers(ctx.chat.id.toString());
-      const count = Object.keys(members).length;
+      // Get chat member information about the current user
+      const chatId = ctx.chat.id;
+      const userId = ctx.from?.id;
       
-      await ctx.reply(`This chat has ${count} tracked members.`);
+      if (!userId) {
+        await ctx.reply("Could not identify your user ID.");
+        return;
+      }
+      
+      // Get chat member information using the chatMembers plugin
+      const member = await ctx.chatMembers.getChatMember(chatId, userId);
+      
+      await ctx.reply(
+        `Your status in this chat is: ${member.status}\n` +
+        `Member tracking is working correctly.`
+      );
     } catch (error) {
       console.error("Error retrieving chat members:", error);
-      await ctx.reply("Error retrieving chat members information.");
+      await ctx.reply("Error retrieving chat member information.");
     }
   });
 
