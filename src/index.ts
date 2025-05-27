@@ -1,10 +1,19 @@
 import { Bot } from "grammy";
 import { config } from "./config.js";
 import { setupBot } from "./bot.js";
+import { connectDatabase } from "./database.js";
 
 // Main entry point
 async function main(): Promise<void> {
   console.log("Starting TeleRPG-G bot...");
+  
+  // Connect to the database first
+  try {
+    await connectDatabase();
+  } catch (error) {
+    console.error("Database initialization failed:", error);
+    process.exit(1);
+  }
   
   // Create a bot instance
   const bot = new Bot(config.botToken);
