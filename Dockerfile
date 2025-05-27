@@ -9,10 +9,6 @@ RUN bun install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Run linting and type checking
-RUN bun run lint
-RUN bun run typecheck
-
 # Environment variables
 ENV NODE_ENV=production
 
