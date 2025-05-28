@@ -24,11 +24,11 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   // Create chat members plugin
   const membersPlugin = chatMembers(psqlAdapter);
   
-  // Register chat members plugin middleware
-  bot.use(membersPlugin);
+  // Create a private chat only composer
+  const privateChat = bot.chatType("private");
 
-  // Handle chat member updates (when users join/leave groups)
-  bot.on("chat_member", async (ctx) => {
+  // Handle chat member updates (when users join/leave groups) inside private chat composer
+  privateChat.on("chat_member", async (ctx) => {
     const update = ctx.chatMember as ChatMemberUpdated;
     console.log(`Chat member update in chat ${update.chat.id}:`, 
       `${update.from.first_name} (${update.from.id}) - `,
@@ -36,8 +36,11 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
       `new status: ${update.new_chat_member.status}`);
   });
 
-  // Create error boundary
-  const errorBoundary = bot.errorBoundary(errorHandler);
+  // Create error boundary inside private chat composer
+  const errorBoundary = privateChat.errorBoundary(errorHandler);
+  
+  // Register chat members plugin middleware inside error boundary
+  errorBoundary.use(membersPlugin);
   
   // Command handlers - registered inside the error boundary
   errorBoundary.command("start", async (ctx) => {
@@ -51,14 +54,14 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
       "TeleRPG-G Help:\n" +
       "/start - Start the bot\n" +
       "/help - Show this help message\n" +
-      "/members - Show current chat members count"
+      "/members - Show your member status"
     );
   });
 
   // Add a new command to demonstrate chat members feature
   errorBoundary.command("members", async (ctx) => {
     if (!ctx.chat) {
-      await ctx.reply("This command must be used in a chat group.");
+      await ctx.reply("Chat information not available.");
       return;
     }
     
