@@ -6,6 +6,7 @@ import { config } from "./config.js";
 interface Database {
   // Tables will be defined here if needed
   chat_members: Record<string, unknown>; // This will store chat member information
+  conversations: Record<string, unknown>; // This will store conversation state information
 }
 
 // Create pg pool
