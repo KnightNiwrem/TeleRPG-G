@@ -1,10 +1,16 @@
 import { Bot, BotError, type Context } from "grammy";
 import { type ChatMemberUpdated } from "grammy/types";
 import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
-import { createStorageAdapter } from "./storage.js";
+import { 
+  conversations, 
+  createConversation, 
+  type Conversation, 
+  type ConversationFlavor 
+} from "@grammyjs/conversations";
+import { createChatMembersAdapter, createConversationsAdapter } from "./storage.js";
 
-// Define the bot context type including the chat members flavor
-type BotContext = Context & ChatMembersFlavor;
+// Define the bot context type including the chat members and conversations flavors
+type BotContext = ConversationFlavor<Context & ChatMembersFlavor>;
 
 /**
  * Create an error handler middleware that works with both long polling and webhooks
@@ -14,15 +20,55 @@ export function errorHandler(error: BotError<BotContext>): void {
 }
 
 /**
+ * Example conversation to ask user about their name and age
+ */
+async function nameAgeConversation(conversation: Conversation<BotContext, BotContext>, ctx: BotContext): Promise<void> {
+  // Send initial message
+  await ctx.reply("Let's have a conversation! What's your name?");
+  
+  // Wait for the user's response
+  const nameCtx = await conversation.waitFor("message:text");
+  
+  // Get the name from the message
+  const name = nameCtx.message?.text || "Unknown";
+  
+  // Ask for age
+  await ctx.reply(`Nice to meet you, ${name}! How old are you?`);
+  
+  // Wait for the user's response
+  const ageCtx = await conversation.waitFor("message:text");
+  
+  // Get the age from the message
+  const age = ageCtx.message?.text || "Unknown";
+  
+  // Final message
+  await ctx.reply(`Thank you for sharing! I'll remember that ${name} is ${age} years old.`);
+}
+
+/**
  * Set up the Telegram bot with handlers and middleware
  * @param bot - Grammy Bot instance
  */
 export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   // Create PostgreSQL adapter for chat members
-  const psqlAdapter = await createStorageAdapter();
+  const chatMembersAdapter = await createChatMembersAdapter();
+  
+  // Create PostgreSQL adapter for conversations
+  const conversationsAdapter = await createConversationsAdapter();
   
   // Create chat members plugin
-  const membersPlugin = chatMembers(psqlAdapter);
+  const membersPlugin = chatMembers(chatMembersAdapter);
+  
+  // Set up conversations plugin with PostgreSQL-based storage
+  bot.use(conversations({
+    storage: {
+      type: "key",
+      adapter: conversationsAdapter
+    }
+  }));
+  
+  // Register the conversation handler
+  bot.use(createConversation(nameAgeConversation, "nameAgeConversation"));
   
   // Create a private chat only composer
   const privateChat = bot.chatType("private");
@@ -54,7 +100,8 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
       "TeleRPG-G Help:\n" +
       "/start - Start the bot\n" +
       "/help - Show this help message\n" +
-      "/members - Show your member status"
+      "/members - Show your member status\n" +
+      "/profile - Start a conversation to create your profile"
     );
   });
 
@@ -86,6 +133,11 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
       console.error("Error retrieving chat members:", error);
       await ctx.reply("Error retrieving chat member information.");
     }
+  });
+
+  // Add a command to start the profile conversation
+  errorBoundary.command("profile", async (ctx) => {
+    await ctx.conversation.enter("nameAgeConversation");
   });
 
   // Handle text messages - inside the error boundary

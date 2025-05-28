@@ -5,6 +5,7 @@
       "name": "telerpg-g",
       "dependencies": {
         "@grammyjs/chat-members": "^1.2.0",
+        "@grammyjs/conversations": "^2.1.0",
         "@grammyjs/storage-psql": "^2.5.1",
         "grammy": "^1.36.3",
         "kysely": "^0.27.2",
@@ -41,6 +42,8 @@
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.3.1", "", { "dependencies": { "@eslint/core": "^0.14.0", "levn": "^0.4.1" } }, "sha512-0J+zgWxHN+xXONWIyPWKFMgVuJoZuGiIFu8yxk7RJjxkzpGmyja5wRFqZIVtjDVOQpV+Rw0iOAjYPE2eQyjr0w=="],
 
     "@grammyjs/chat-members": ["@grammyjs/chat-members@1.2.0", "", { "peerDependencies": { "grammy": "^1.19.0" } }, "sha512-RNkBulRh09idm2PelTXt7ThHW98D+5N4PH55N3EE7vEnFbIx5ZP/JbkSlb7F/tDeH/rZ07gzpwaeCUFcUJhlcA=="],
+
+    "@grammyjs/conversations": ["@grammyjs/conversations@2.1.0", "", { "peerDependencies": { "grammy": "^1.20.1" } }, "sha512-nYoHwFyXcQ2lkQejKReoINknkgFjeIZhyJNMBwHng5UHO/ewHKs1dV2XVaLrKkHTZ1gCZ+dKkjEp26wwHyQeGg=="],
 
     "@grammyjs/storage-psql": ["@grammyjs/storage-psql@2.5.1", "", {}, "sha512-60O5UJQ7pmsQULp5yQ7dDdYvqOJqTpTqfY9Kk5pfldPMc8RA/3OvKMvLBbH/xfxfA5//RpDU+Psl7K2VxN2OcQ=="],
 
