@@ -4,7 +4,7 @@ import { type ConversationFlavor } from "@grammyjs/conversations";
 import { config } from "./config.js";
 import { setupBot } from "./bot.js";
 import { connectDatabase } from "./database.js";
-import { setupDatabaseTables } from "./migrations.js";
+import { migrateToLatest } from "./migrations/migrator.js";
 
 // Define the bot context type including the chat members and conversations flavors
 type BotContext = Context & ChatMembersFlavor & ConversationFlavor<Context>;
@@ -17,8 +17,8 @@ async function main(): Promise<void> {
   try {
     await connectDatabase();
     
-    // Set up required database tables
-    await setupDatabaseTables();
+    // Run migrations to set up the database schema
+    await migrateToLatest();
   } catch (error) {
     console.error("Database initialization failed:", error);
     process.exit(1);
