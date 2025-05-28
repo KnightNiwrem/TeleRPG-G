@@ -1,10 +1,24 @@
-import { Bot, BotError, type Context } from "grammy";
+import { Bot, BotError, type Context, NextFunction } from "grammy";
 import { type ChatMemberUpdated } from "grammy/types";
 import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
 import { createStorageAdapter } from "./storage.js";
 
 // Define the bot context type including the chat members flavor
 type BotContext = Context & ChatMembersFlavor;
+
+/**
+ * Middleware to restrict bot usage to private chats only
+ */
+async function privateChatsOnly(ctx: BotContext, next: NextFunction): Promise<void> {
+  // Check if this is a private chat
+  if (ctx.chat?.type !== "private") {
+    await ctx.reply("This bot can only be used in private chats.");
+    return; // Stop propagation to next handlers
+  }
+  
+  // Continue to next middleware or handler if it's a private chat
+  await next();
+}
 
 /**
  * Create an error handler middleware that works with both long polling and webhooks
@@ -23,6 +37,9 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   
   // Create chat members plugin
   const membersPlugin = chatMembers(psqlAdapter);
+  
+  // Register private chat filter middleware
+  bot.use(privateChatsOnly);
   
   // Register chat members plugin middleware
   bot.use(membersPlugin);
