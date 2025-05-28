@@ -2,6 +2,8 @@ import { Bot, BotError, type Context } from "grammy";
 import { type ChatMemberUpdated } from "grammy/types";
 import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
 import { createStorageAdapter } from "./storage.js";
+import { getPlayerByTelegramId } from "./player.js";
+import { createRegistrationConversation } from "./conversations.js";
 
 // Define the bot context type including the chat members flavor
 type BotContext = Context & ChatMembersFlavor;
@@ -42,11 +44,27 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   // Register chat members plugin middleware inside error boundary
   errorBoundary.use(membersPlugin);
   
+  // Player registration conversation
+  const registrationConversation = createRegistrationConversation();
+  errorBoundary.use(registrationConversation);
+  
   // Command handlers - registered inside the error boundary
   errorBoundary.command("start", async (ctx) => {
-    await ctx.reply(
-      `Hello, ${ctx.from?.first_name || "adventurer"}! Welcome to TeleRPG-G.`
-    );
+    const message = `Hello, ${ctx.from?.first_name || "adventurer"}! Welcome to TeleRPG-G.`;
+    
+    if (ctx.from) {
+      const player = await getPlayerByTelegramId(ctx.from.id.toString());
+      if (player) {
+        await ctx.reply(`${message}\nWelcome back, ${player.name}!`);
+      } else {
+        await ctx.reply(
+          `${message}\n\nIt seems you're new here. Let's create your player!` +
+          "\nUse /register to get started!"
+        );
+      }
+    } else {
+      await ctx.reply(message);
+    }
   });
 
   errorBoundary.command("help", async (ctx) => {
@@ -54,7 +72,8 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
       "TeleRPG-G Help:\n" +
       "/start - Start the bot\n" +
       "/help - Show this help message\n" +
-      "/members - Show your member status"
+      "/members - Show your member status\n" +
+      "/register - Create a new player"
     );
   });
 
@@ -90,6 +109,28 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
 
   // Handle text messages - inside the error boundary
   errorBoundary.on("message:text", async (ctx) => {
-    await ctx.reply("I received your message: " + ctx.message.text);
+    // If there's no user ID, we can't proceed
+    if (!ctx.from) {
+      await ctx.reply("Could not identify your user details.");
+      return;
+    }
+    
+    // Check if the player exists
+    const player = await getPlayerByTelegramId(ctx.from.id.toString());
+    
+    // If player doesn't exist and they're not in registration process, prompt to register
+    if (!player && !ctx.message.text.startsWith("/")) {
+      await ctx.reply(
+        "You don't have a player profile yet!\n" +
+        "Use /register to create your player and start your adventure."
+      );
+      return;
+    }
+    
+    // Only reach here if player exists or if it's a command
+    // Commands are handled by other handlers, so this is just for general text messages
+    if (player) {
+      await ctx.reply(`Hello ${player.name}, I received your message: ${ctx.message.text}`);
+    }
   });
 }
