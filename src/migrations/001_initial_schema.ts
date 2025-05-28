@@ -1,6 +1,12 @@
 import { Kysely } from 'kysely';
 
-export async function up(db: Kysely<any>): Promise<void> {
+// Define the database schema
+interface Database {
+  chat_members: Record<string, unknown>;
+  conversations: Record<string, unknown>;
+}
+
+export async function up(db: Kysely<Database>): Promise<void> {
   // Create conversations table if it doesn't exist
   await db.schema
     .createTable('conversations')
@@ -18,7 +24,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
+export async function down(db: Kysely<Database>): Promise<void> {
   // Drop tables in reverse order
   await db.schema.dropTable('chat_members').ifExists().execute();
   await db.schema.dropTable('conversations').ifExists().execute();
