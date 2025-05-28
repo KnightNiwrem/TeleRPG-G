@@ -24,19 +24,11 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   // Create chat members plugin
   const membersPlugin = chatMembers(psqlAdapter);
   
-  // Handle non-private chats
-  bot.filter(ctx => ctx.chat?.type !== "private").use(async (ctx) => {
-    await ctx.reply("This bot can only be used in private chats.");
-  });
-
   // Create a private chat only composer
-  const private_chat = bot.chatType("private");
-  
-  // Register chat members plugin middleware inside private chat composer
-  private_chat.use(membersPlugin);
+  const privateChat = bot.chatType("private");
 
   // Handle chat member updates (when users join/leave groups) inside private chat composer
-  private_chat.on("chat_member", async (ctx) => {
+  privateChat.on("chat_member", async (ctx) => {
     const update = ctx.chatMember as ChatMemberUpdated;
     console.log(`Chat member update in chat ${update.chat.id}:`, 
       `${update.from.first_name} (${update.from.id}) - `,
@@ -45,7 +37,10 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   });
 
   // Create error boundary inside private chat composer
-  const errorBoundary = private_chat.errorBoundary(errorHandler);
+  const errorBoundary = privateChat.errorBoundary(errorHandler);
+  
+  // Register chat members plugin middleware inside error boundary
+  errorBoundary.use(membersPlugin);
   
   // Command handlers - registered inside the error boundary
   errorBoundary.command("start", async (ctx) => {
