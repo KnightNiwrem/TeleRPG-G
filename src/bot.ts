@@ -61,7 +61,10 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   
   // Set up conversations plugin with PostgreSQL-based storage
   bot.use(conversations({
-    storage: conversationsAdapter
+    storage: {
+      type: "key",
+      adapter: conversationsAdapter
+    }
   }));
   
   // Register the conversation handler

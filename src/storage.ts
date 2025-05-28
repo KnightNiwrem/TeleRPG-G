@@ -1,13 +1,16 @@
 import { PsqlAdapter } from "@grammyjs/storage-psql";
 import { Client } from "pg";
+import { type StorageAdapter } from "grammy";
+import { type ChatMember } from "grammy/types";
+import { type ConversationData } from "@grammyjs/conversations/out/plugin.js";
+import { type VersionedState } from "@grammyjs/conversations/out/storage.js";
 import { config } from "./config.js";
 
 /**
  * Create a PostgreSQL storage adapter for Grammy chat members plugin
  * @returns Configured PostgreSQL storage adapter instance
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function createChatMembersAdapter(): Promise<any> {
+export async function createChatMembersAdapter(): Promise<StorageAdapter<ChatMember>> {
   const client = new Client({
     host: config.database.host,
     port: config.database.port,
@@ -22,26 +25,26 @@ export async function createChatMembersAdapter(): Promise<any> {
     tableName: "chat_members"
   });
   
-  // Type assertion to make it compatible with the expected type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return adapter as any;
+  return adapter as StorageAdapter<ChatMember>;
 }
 
 /**
  * For compatibility with previous code
  * @deprecated Use createChatMembersAdapter instead
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function createStorageAdapter(): Promise<any> {
+export async function createStorageAdapter(): Promise<StorageAdapter<ChatMember>> {
   return createChatMembersAdapter();
 }
 
 /**
- * Create a PostgreSQL storage adapter for Grammy conversations plugin
- * @returns Configured PostgreSQL storage adapter instance for conversations
+ * Create a versioned state storage adapter for Grammy conversations plugin
+ * @returns Configured PostgreSQL storage adapter for conversations
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function createConversationsAdapter(): Promise<any> {
+export async function createConversationsAdapter(): Promise<{
+  read(key: string): Promise<VersionedState<ConversationData> | undefined>;
+  write(key: string, state: VersionedState<ConversationData>): Promise<void>;
+  delete(key: string): Promise<void>;
+}> {
   const client = new Client({
     host: config.database.host,
     port: config.database.port,
@@ -50,13 +53,23 @@ export async function createConversationsAdapter(): Promise<any> {
     database: config.database.database,
   });
   
-  // Create PostgreSQL adapter for conversations
+  // Create PostgreSQL adapter
   const adapter = await PsqlAdapter.create({
     client,
     tableName: "conversations"
   });
   
-  // Type assertion needed due to complex generic type compatibility
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return adapter as any;
+  // Create a wrapper that satisfies the VersionedStateStorage interface
+  return {
+    async read(key: string): Promise<VersionedState<ConversationData> | undefined> {
+      const data = await adapter.read(key);
+      return data as VersionedState<ConversationData> | undefined;
+    },
+    async write(key: string, state: VersionedState<ConversationData>): Promise<void> {
+      await adapter.write(key, state);
+    },
+    async delete(key: string): Promise<void> {
+      await adapter.delete(key);
+    }
+  };
 }
