@@ -10,7 +10,7 @@ import {
 import { createChatMembersAdapter, createConversationsAdapter } from "./storage.js";
 
 // Define the bot context type including the chat members and conversations flavors
-type BotContext = Context & ChatMembersFlavor & ConversationFlavor<Context & ChatMembersFlavor>;
+type BotContext = ConversationFlavor<Context & ChatMembersFlavor>;
 
 /**
  * Create an error handler middleware that works with both long polling and webhooks
