@@ -6,7 +6,11 @@
   "scripts": {
     "start": "bun run src/index.ts",
     "lint": "eslint --ext .ts ./src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate": "bun run src/migrations/cli.ts",
+    "migrate:up": "bun run src/migrations/cli.ts up",
+    "migrate:down": "bun run src/migrations/cli.ts down",
+    "migrate:create": "bun run src/migrations/cli.ts create"
   },
   "devDependencies": {
     "@types/bun": "latest",
