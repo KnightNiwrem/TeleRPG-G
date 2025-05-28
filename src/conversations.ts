@@ -1,12 +1,12 @@
-import { Composer } from "grammy";
-import { conversations, createConversation, type Conversation } from "@grammyjs/conversations";
+import { Composer, type Context } from "grammy";
+import { createConversation, type Conversation } from "@grammyjs/conversations";
 import { createPlayer } from "./player.js";
 import { type BotContext } from "./index.js";
 
 /**
  * Player registration conversation
  */
-async function registrationConversation(conversation: Conversation<BotContext, BotContext>, ctx: BotContext) {
+async function registrationConversation(conversation: Conversation<Context>, ctx: Context) {
   // Check if we have user information
   if (!ctx.from || !ctx.chat) {
     await ctx.reply("Could not identify your user details.");
@@ -19,17 +19,16 @@ async function registrationConversation(conversation: Conversation<BotContext, B
     "First, what name would you like to use in the game?"
   );
 
-  // Get player name with validation
+  // Get player name with validation using waitFor
   let isValidName = false;
   let name = "";
   
   while (!isValidName) {
-    // Wait for the user's name input
-    const nameCtx = await conversation.wait();
-    
-    if (!nameCtx.message?.text) continue;
+    // Wait for text message
+    const nameCtx = await conversation.waitFor("message:text");
     name = nameCtx.message.text.trim();
     
+    // Validate name
     if (name.length < 3 || name.length > 20) {
       await nameCtx.reply("Your name must be between 3 and 20 characters. Please try again.");
     } else {
@@ -46,10 +45,8 @@ async function registrationConversation(conversation: Conversation<BotContext, B
   // Process confirmation
   let confirmed = false;
   while (!confirmed) {
-    // Wait for yes/no response
-    const confirmCtx = await conversation.wait();
-    
-    if (!confirmCtx.message?.text) continue;
+    // Wait for text message
+    const confirmCtx = await conversation.waitFor("message:text");
     const response = confirmCtx.message.text.toLowerCase();
     
     if (response === "yes" || response === "y") {
@@ -74,14 +71,16 @@ async function registrationConversation(conversation: Conversation<BotContext, B
     } else if (response === "no" || response === "n") {
       await ctx.reply("No problem! Let's choose a different name. What name would you like to use?");
       
-      // Go back to asking for a name
+      // Reset name validity
       isValidName = false;
+      
+      // Go back to asking for a name
       while (!isValidName) {
-        const nameCtx = await conversation.wait();
-        
-        if (!nameCtx.message?.text) continue;
+        // Wait for text message
+        const nameCtx = await conversation.waitFor("message:text");
         name = nameCtx.message.text.trim();
         
+        // Validate name
         if (name.length < 3 || name.length > 20) {
           await nameCtx.reply("Your name must be between 3 and 20 characters. Please try again.");
         } else {
@@ -107,22 +106,8 @@ async function registrationConversation(conversation: Conversation<BotContext, B
 export function createRegistrationConversation(): Composer<BotContext> {
   const composer = new Composer<BotContext>();
   
-  // Add the conversations plugin
-  composer.use(conversations());
-  
   // Add the registration conversation
   composer.use(createConversation(registrationConversation));
-  
-  // Start registration process
-  composer.command("register", async (ctx) => {
-    if (!ctx.from) {
-      await ctx.reply("Could not identify your user details.");
-      return;
-    }
-    
-    // Start the registration conversation
-    await ctx.conversation.enter("registrationConversation");
-  });
   
   return composer;
 }

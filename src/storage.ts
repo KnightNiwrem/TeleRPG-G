@@ -33,3 +33,29 @@ export async function createStorageAdapter(): Promise<{
     delete(key: string): Promise<void>;
   };
 }
+
+/**
+ * Create a PostgreSQL storage adapter for Grammy conversations
+ * @returns Configured PostgreSQL storage adapter for conversations
+ */
+export async function createConversationsAdapter() {
+  const client = new Client({
+    host: config.database.host,
+    port: config.database.port,
+    user: config.database.user,
+    password: config.database.password,
+    database: config.database.database,
+  });
+  
+  // Create PostgreSQL adapter for conversations
+  const adapter = await PsqlAdapter.create({
+    client,
+    tableName: "conversations"
+  });
+  
+  // For compatibility with conversations plugin, type "key" as a string literal
+  return {
+    type: "key" as const,
+    adapter
+  };
+}
