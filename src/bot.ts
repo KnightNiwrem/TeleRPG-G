@@ -1,24 +1,10 @@
-import { Bot, BotError, type Context, NextFunction } from "grammy";
+import { Bot, BotError, type Context } from "grammy";
 import { type ChatMemberUpdated } from "grammy/types";
 import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
 import { createStorageAdapter } from "./storage.js";
 
 // Define the bot context type including the chat members flavor
 type BotContext = Context & ChatMembersFlavor;
-
-/**
- * Middleware to restrict bot usage to private chats only
- */
-async function privateChatsOnly(ctx: BotContext, next: NextFunction): Promise<void> {
-  // Check if this is a private chat
-  if (ctx.chat?.type !== "private") {
-    await ctx.reply("This bot can only be used in private chats.");
-    return; // Stop propagation to next handlers
-  }
-  
-  // Continue to next middleware or handler if it's a private chat
-  await next();
-}
 
 /**
  * Create an error handler middleware that works with both long polling and webhooks
@@ -38,14 +24,19 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   // Create chat members plugin
   const membersPlugin = chatMembers(psqlAdapter);
   
-  // Register private chat filter middleware
-  bot.use(privateChatsOnly);
-  
-  // Register chat members plugin middleware
-  bot.use(membersPlugin);
+  // Handle non-private chats
+  bot.filter(ctx => ctx.chat?.type !== "private").use(async (ctx) => {
+    await ctx.reply("This bot can only be used in private chats.");
+  });
 
-  // Handle chat member updates (when users join/leave groups)
-  bot.on("chat_member", async (ctx) => {
+  // Create a private chat only composer
+  const private_chat = bot.chatType("private");
+  
+  // Register chat members plugin middleware inside private chat composer
+  private_chat.use(membersPlugin);
+
+  // Handle chat member updates (when users join/leave groups) inside private chat composer
+  private_chat.on("chat_member", async (ctx) => {
     const update = ctx.chatMember as ChatMemberUpdated;
     console.log(`Chat member update in chat ${update.chat.id}:`, 
       `${update.from.first_name} (${update.from.id}) - `,
@@ -53,8 +44,8 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
       `new status: ${update.new_chat_member.status}`);
   });
 
-  // Create error boundary
-  const errorBoundary = bot.errorBoundary(errorHandler);
+  // Create error boundary inside private chat composer
+  const errorBoundary = private_chat.errorBoundary(errorHandler);
   
   // Command handlers - registered inside the error boundary
   errorBoundary.command("start", async (ctx) => {
