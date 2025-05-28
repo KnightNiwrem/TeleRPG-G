@@ -7,6 +7,7 @@ interface Database {
   // Tables will be defined here if needed
   chat_members: Record<string, unknown>; // This will store chat member information
   players: PlayerTable; // This will store player information
+  conversations: Record<string, unknown>; // This will store conversation session data
 }
 
 // Player table schema
@@ -74,6 +75,14 @@ async function migrateDatabase(): Promise<void> {
       .addColumn('updated_at', 'timestamp', (col) => 
         col.defaultTo(sql`CURRENT_TIMESTAMP`).notNull()
       )
+      .execute();
+    
+    // Create conversations table if it doesn't exist
+    await db.schema
+      .createTable('conversations')
+      .ifNotExists()
+      .addColumn('key', 'varchar(255)', (col) => col.primaryKey())
+      .addColumn('value', 'jsonb', (col) => col.notNull())
       .execute();
 
     console.log("Database migrations completed successfully");

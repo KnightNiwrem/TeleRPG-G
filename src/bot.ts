@@ -68,7 +68,7 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   // Register chat members plugin middleware inside error boundary
   errorBoundary.use(membersPlugin);
   
-  // Add conversations plugin with PostgreSQL storage
+  // Add conversations plugin
   errorBoundary.use(conversations());
   
   // Player registration conversation

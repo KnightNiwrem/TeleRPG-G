@@ -19,6 +19,9 @@ async function registrationConversation(conversation: Conversation<Context>, ctx
     "First, what name would you like to use in the game?"
   );
 
+  // Create a checkpoint after welcome message
+  await conversation.checkpoint();
+
   // Get player name with validation using waitFor
   let isValidName = false;
   let name = "";
@@ -35,6 +38,9 @@ async function registrationConversation(conversation: Conversation<Context>, ctx
       isValidName = true;
     }
   }
+
+  // Checkpoint after valid name received
+  await conversation.checkpoint();
 
   // Ask for confirmation
   await ctx.reply(
@@ -74,6 +80,9 @@ async function registrationConversation(conversation: Conversation<Context>, ctx
       // Reset name validity
       isValidName = false;
       
+      // Save checkpoint before going back to name selection
+      await conversation.checkpoint();
+      
       // Go back to asking for a name
       while (!isValidName) {
         // Wait for text message
@@ -87,6 +96,9 @@ async function registrationConversation(conversation: Conversation<Context>, ctx
           isValidName = true;
         }
       }
+      
+      // Checkpoint after valid name is received
+      await conversation.checkpoint();
       
       // Ask for confirmation again
       await ctx.reply(
