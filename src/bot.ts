@@ -7,10 +7,10 @@ import {
   type Conversation, 
   type ConversationFlavor 
 } from "@grammyjs/conversations";
-import { createChatMembersAdapter } from "./storage.js";
+import { createChatMembersAdapter, createConversationsAdapter } from "./storage.js";
 
 // Define the bot context type including the chat members and conversations flavors
-type BotContext = Context & ChatMembersFlavor & ConversationFlavor<Context>;
+type BotContext = Context & ChatMembersFlavor & ConversationFlavor<Context & ChatMembersFlavor>;
 
 /**
  * Create an error handler middleware that works with both long polling and webhooks
@@ -22,12 +22,12 @@ export function errorHandler(error: BotError<BotContext>): void {
 /**
  * Example conversation to ask user about their name and age
  */
-async function nameAgeConversation(conversation: Conversation<BotContext>, ctx: BotContext): Promise<void> {
+async function nameAgeConversation(conversation: Conversation<BotContext, BotContext>, ctx: BotContext): Promise<void> {
   // Send initial message
   await ctx.reply("Let's have a conversation! What's your name?");
   
   // Wait for the user's response
-  const nameCtx = await conversation.wait();
+  const nameCtx = await conversation.waitFor("message:text");
   
   // Get the name from the message
   const name = nameCtx.message?.text || "Unknown";
@@ -36,7 +36,7 @@ async function nameAgeConversation(conversation: Conversation<BotContext>, ctx: 
   await ctx.reply(`Nice to meet you, ${name}! How old are you?`);
   
   // Wait for the user's response
-  const ageCtx = await conversation.wait();
+  const ageCtx = await conversation.waitFor("message:text");
   
   // Get the age from the message
   const age = ageCtx.message?.text || "Unknown";
@@ -53,17 +53,19 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   // Create PostgreSQL adapter for chat members
   const chatMembersAdapter = await createChatMembersAdapter();
   
+  // Create PostgreSQL adapter for conversations
+  const conversationsAdapter = await createConversationsAdapter();
+  
   // Create chat members plugin
   const membersPlugin = chatMembers(chatMembersAdapter);
   
   // Set up conversations plugin with PostgreSQL-based storage
-  // Note: Table 'conversations' must exist in the database (created in migrations.ts)
-  bot.use(conversations());
+  bot.use(conversations({
+    storage: conversationsAdapter
+  }));
   
   // Register the conversation handler
-  // Type assertion needed due to issues with generic parameters
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  bot.use(createConversation(nameAgeConversation as any));
+  bot.use(createConversation(nameAgeConversation, "nameAgeConversation"));
   
   // Create a private chat only composer
   const privateChat = bot.chatType("private");
