@@ -24,3 +24,6 @@ If Redis is used in this project:
 If this project implements a Telegram bot:
 - Use `npm:grammy` and its related plugins
 - **Important**: Grammy sessions MUST NOT be used in this project.
+
+## Code Quality Standards
+- **Always avoid the use of the `any` type** - use proper TypeScript types instead

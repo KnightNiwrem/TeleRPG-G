@@ -2,8 +2,7 @@ import { PsqlAdapter } from "@grammyjs/storage-psql";
 import { Client } from "pg";
 import { type StorageAdapter } from "grammy";
 import { type ChatMember } from "grammy/types";
-import { type ConversationData } from "@grammyjs/conversations/out/plugin.js";
-import { type VersionedState } from "@grammyjs/conversations/out/storage.js";
+import { type ConversationData, type VersionedState } from "@grammyjs/conversations";
 import { config } from "./config.js";
 
 /**
