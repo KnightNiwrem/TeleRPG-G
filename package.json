@@ -18,10 +18,11 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "grammy": "^1.36.3",
     "@grammyjs/chat-members": "^1.2.0",
+    "@grammyjs/conversations": "npm:@grammyjs/conversations@2",
     "@grammyjs/storage-psql": "^2.5.1",
-    "pg": "^8.11.3",
-    "kysely": "^0.27.2"
+    "grammy": "^1.36.3",
+    "kysely": "^0.27.2",
+    "pg": "^8.11.3"
   }
 }

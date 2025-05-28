@@ -1,12 +1,10 @@
-import { Bot, BotError, type Context } from "grammy";
+import { Bot, BotError } from "grammy";
 import { type ChatMemberUpdated } from "grammy/types";
-import { chatMembers, type ChatMembersFlavor } from "@grammyjs/chat-members";
+import { chatMembers } from "@grammyjs/chat-members";
 import { createStorageAdapter } from "./storage.js";
 import { getPlayerByTelegramId } from "./player.js";
 import { createRegistrationConversation } from "./conversations.js";
-
-// Define the bot context type including the chat members flavor
-type BotContext = Context & ChatMembersFlavor;
+import { type BotContext } from "./index.js";
 
 /**
  * Create an error handler middleware that works with both long polling and webhooks

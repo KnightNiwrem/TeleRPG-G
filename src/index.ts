@@ -1,11 +1,12 @@
 import { Bot, type Context } from "grammy";
 import { type ChatMembersFlavor } from "@grammyjs/chat-members";
+import { type ConversationFlavor } from "@grammyjs/conversations";
 import { config } from "./config.js";
 import { setupBot } from "./bot.js";
 import { connectDatabase } from "./database.js";
 
-// Define the bot context type including the chat members flavor
-type BotContext = Context & ChatMembersFlavor;
+// Define the bot context type including the chat members and conversation flavors
+export type BotContext = Context & ChatMembersFlavor & ConversationFlavor<Context>;
 
 // Main entry point
 async function main(): Promise<void> {
