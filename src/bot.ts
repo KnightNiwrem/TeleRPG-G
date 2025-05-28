@@ -1,4 +1,4 @@
-import { Bot, BotError } from "grammy";
+import { Bot, BotError, type NextFunction } from "grammy";
 import { type ChatMemberUpdated } from "grammy/types";
 import { chatMembers } from "@grammyjs/chat-members";
 import { conversations } from "@grammyjs/conversations";
@@ -12,6 +12,31 @@ import { type BotContext } from "./index.js";
  */
 export function errorHandler(error: BotError<BotContext>): void {
   console.error("Error in bot handler:", error);
+}
+
+/**
+ * Middleware to check if user is registered and start registration if needed
+ */
+async function playerRegistrationMiddleware(ctx: BotContext, next: NextFunction): Promise<void> {
+  // Skip middleware for non-user contexts or if no user info available
+  if (!ctx.from) {
+    return next();
+  }
+  
+  // Check if the player exists
+  const player = await getPlayerByTelegramId(ctx.from.id.toString());
+  
+  // If player doesn't exist, start registration
+  if (!player) {
+    await ctx.reply(
+      "You don't have a player profile yet! Let's create one now."
+    );
+    await ctx.conversation.enter("registrationConversation");
+    return; // Don't call next() - registration conversation will handle from here
+  }
+  
+  // Player exists, continue with normal processing
+  await next();
 }
 
 /**
@@ -62,7 +87,6 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
         await ctx.reply(
           `${message}\n\nIt seems you're new here. Let's create your player!`
         );
-        // Start registration conversation immediately for new users
         await ctx.conversation.enter("registrationConversation");
       }
     } else {
@@ -70,7 +94,7 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
     }
   });
 
-  errorBoundary.command("help", async (ctx) => {
+  errorBoundary.command("help", playerRegistrationMiddleware, async (ctx) => {
     await ctx.reply(
       "TeleRPG-G Help:\n" +
       "/start - Start the bot\n" +
@@ -80,7 +104,7 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
   });
 
   // Add a new command to demonstrate chat members feature
-  errorBoundary.command("members", async (ctx) => {
+  errorBoundary.command("members", playerRegistrationMiddleware, async (ctx) => {
     if (!ctx.chat) {
       await ctx.reply("Chat information not available.");
       return;
@@ -109,33 +133,18 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
     }
   });
 
-  // Handle text messages - inside the error boundary
-  errorBoundary.on("message:text", async (ctx) => {
+  // Handle text messages - inside the error boundary with registration middleware
+  errorBoundary.on("message:text", playerRegistrationMiddleware, async (ctx) => {
     // If there's no user ID, we can't proceed
     if (!ctx.from) {
       await ctx.reply("Could not identify your user details.");
       return;
     }
     
-    // Check if the player exists
+    // Get the player (we know they exist due to middleware)
     const player = await getPlayerByTelegramId(ctx.from.id.toString());
     
-    // If player doesn't exist, start registration automatically
-    if (!player) {
-      // Don't respond to commands as they'll be handled by other handlers
-      if (!ctx.message.text.startsWith("/")) {
-        await ctx.reply(
-          "You don't have a player profile yet! Let's create one now."
-        );
-      }
-      
-      // Start registration conversation
-      await ctx.conversation.enter("registrationConversation");
-      return;
-    }
-    
-    // Only reach here if player exists or if it's a command
-    // Commands are handled by other handlers, so this is just for general text messages
+    // Only respond to non-command messages for registered players
     if (player && !ctx.message.text.startsWith("/")) {
       await ctx.reply(`Hello ${player.name}, I received your message: ${ctx.message.text}`);
     }
