@@ -68,14 +68,14 @@ export async function setupBot(bot: Bot<BotContext>): Promise<void> {
       "TeleRPG-G Help:\n" +
       "/start - Start the bot\n" +
       "/help - Show this help message\n" +
-      "/members - Show current chat members count"
+      "/members - Show your member status"
     );
   });
 
   // Add a new command to demonstrate chat members feature
   errorBoundary.command("members", async (ctx) => {
     if (!ctx.chat) {
-      await ctx.reply("This command must be used in a chat group.");
+      await ctx.reply("Chat information not available.");
       return;
     }
     
