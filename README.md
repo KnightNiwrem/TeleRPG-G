@@ -8,6 +8,7 @@ A Telegram bot RPG game built with [grammy](https://grammy.dev/) and [Bun](https
 - TypeScript support
 - ESLint for code quality
 - Docker support for easy deployment
+- Database migrations using Kysely
 
 ## Development Setup
 
@@ -29,7 +30,11 @@ A Telegram bot RPG game built with [grammy](https://grammy.dev/) and [Bun](https
    cp .env.example .env
    # Edit .env with your Telegram Bot Token
    ```
-4. Start the development server:
+4. Run database migrations:
+   ```bash
+   bun migrate
+   ```
+5. Start the development server:
    ```bash
    bun start
    ```
@@ -39,6 +44,10 @@ A Telegram bot RPG game built with [grammy](https://grammy.dev/) and [Bun](https
 - `bun start`: Start the bot in development mode
 - `bun run lint`: Run ESLint to check code quality
 - `bun run typecheck`: Run TypeScript type checking
+- `bun migrate`: Run all pending migrations
+- `bun migrate:up`: Run all pending migrations (same as `migrate`)
+- `bun migrate:down`: Roll back the most recent migration
+- `bun migrate:create <name>`: Create a new migration file
 
 ## Docker Deployment
 
